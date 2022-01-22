@@ -98,14 +98,14 @@ function Submenu() {return (
     <ul className="absolute hidden group-hover:inline-block top-7 bg-gray-900 rounded-lg transition-all ease-in-out  h-fit w-5/6 p-2 z-[-1]">
       <Link to='/profile'>
         <li className="hover:bg-gray-600">
-            <a>My Profile</a>
+            <span>My Profile</span>
         </li>
       </Link>
       <li className="hover:bg-gray-600" onClick={() => signOut(auth)}>
-        <a>Sign Out</a>
+        <span>Sign Out</span>
       </li>
       {/* <li className="hover:bg-gray-600">
-        <a>Our Portfolio</a>
+        <span>Our Portfolio</span>
       </li> */}
     </ul>
   )

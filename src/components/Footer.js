@@ -32,13 +32,13 @@ function FooterElement({title, collapsable, ...props}) {
                 {collapsable && <ChevronDownIcon className="w-6 h-6 sb-color md:hidden"/>}
             </div>
             <div className="space-y-1">
-                {(visible || screenWidth>=768) && props.labels.map(label => {
-                    return <p className="sb-underline cursor-pointer w-fit h-full">{label}</p>
+                {(visible || screenWidth>=768) && props.labels.map((label, i) => {
+                    return <p key={i} className="sb-underline cursor-pointer w-fit h-full">{label}</p>
                 })}
             </div>
             <div className="text-sm text-gray-600">
-                {(visible || screenWidth>=768) && props.labels_small?.map(label => {
-                    return <p>{label}</p>
+                {(visible || screenWidth>=768) && props.labels_small?.map((label, i) => {
+                    return <p key={i}>{label}</p>
                 })}
             </div>
         </div>

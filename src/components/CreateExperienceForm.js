@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Formik, Form } from 'formik';
 import ImageUpload from './form/ImageUpload';
-import { useState } from 'react/cjs/react.development';
+import { useState } from 'react';
 import { storage } from '../lib/firebase';
 import { ref, uploadBytes, uploadString } from 'firebase/storage';
 
@@ -11,9 +11,9 @@ function CreateExperienceForm({setParentState}) {
 
     const [state, setState] = useState(0)
 
-    useEffect(() => {
-        console.log(imagesInBytes)
-    }, [imagesInBytes])
+    // useEffect(() => {
+    //     console.log(imagesInBytes)
+    // }, [imagesInBytes])
 
     return (
         <div className='w-full h-full'>

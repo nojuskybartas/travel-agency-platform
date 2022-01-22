@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useState } from 'react/cjs/react.development';
+import { useState } from 'react';
 import 'react-dropzone-uploader/dist/styles.css'
 import Dropzone from 'react-dropzone-uploader'
 import { getDroppedOrSelectedFiles } from 'html5-file-selector';
@@ -95,10 +95,10 @@ function ImageUpload({setImagesInBytes}) {
     }
 
     const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
-        const textMsg = files.length > 0 ? 'Upload Again' : 'Upload Visuals'
+        const textMsg = files.length > 0 ? 'Upload Again' : 'Drag n drop these photies '
 
         return (
-            <label className="w-full h-full flex items-center justify-center">
+            <label className="w-full h-full flex items-center justify-center overflow-hidden">
                 {textMsg}
                 <input
                     style={{ display: 'none' }}
