@@ -24,9 +24,10 @@ function App() {
         // const user = auth.currentUser
 
         const user = cloneDeep(authUser)
-        if (user.metadata.createdAt === user.metadata.lastLoginAt) {
-          setDefaultUserDetailsOnRegister(user.uid)
-        }
+
+        // TODO: FOR DEV ONLY, REMOVE WHEN DEPLOY
+        setDefaultUserDetailsOnRegister(user.uid)
+        
         
         console.log(user)
         setUser(user)

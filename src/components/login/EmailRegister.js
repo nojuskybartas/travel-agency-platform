@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useState } from 'react'
 import { auth } from '../../lib/firebase';
+import { setDefaultUserDetailsOnRegister } from '../../lib/storage';
 
 
 function EmailRegister({handleLoginShow}) {
@@ -18,10 +19,13 @@ function EmailRegister({handleLoginShow}) {
                 updateProfile(userCredential.user, {
                     displayName: name,
                     photoURL: `https://avatars.dicebear.com/api/big-smile/${name}.svg`
-                })
-                console.log(userCredential.user)
-                handleLoginShow()
-                
+                }).then(() => {
+                    console.log('updated user')
+                    setDefaultUserDetailsOnRegister(userCredential.uid).then(() => {
+                        console.log(auth.currentUser)
+                        handleLoginShow()
+                    })     
+                })           
             }
         })
         .catch(error => alert(error.message))

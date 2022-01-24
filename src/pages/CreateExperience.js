@@ -9,7 +9,7 @@ import CreateExperienceSuccess from '../components/CreateExperienceSuccess';
 function CreateExperience() {
 
     const [state, setState] = useState('menu')
-    const experienceId = new Date().valueOf() * Math.floor(Math.random() * 10000)
+    const [experienceId, setExperienceId] = useState(new Date().valueOf() * Math.floor(Math.random() * 10000))
 
     return (
         <div>

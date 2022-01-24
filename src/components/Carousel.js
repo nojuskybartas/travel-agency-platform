@@ -32,10 +32,10 @@ function Carousel({label, items, infinite}) {
                 responsive={responsive}  
                 items={items} 
                 renderPrevButton={() => {
-                    return items.length > 1 && <ArrowCircleLeftIcon className='left-[-2vw] bg-white hover:bg-black hover:text-white rounded-full ml-3 w-12 h-12 absolute top-1/4'/>
+                    return items?.length > 1 && <ArrowCircleLeftIcon className='left-[-2vw] bg-white hover:bg-black hover:text-white rounded-full ml-3 w-12 h-12 absolute top-1/4'/>
                 }}
                 renderNextButton={() => {
-                    return items.length > 1 && <ArrowCircleRightIcon className='right-[-2vw] bg-white hover:bg-black hover:text-white rounded-full mr-3 w-12 h-12 absolute top-1/4'/>
+                    return items?.length > 1 && <ArrowCircleRightIcon className='right-[-2vw] bg-white hover:bg-black hover:text-white rounded-full mr-3 w-12 h-12 absolute top-1/4'/>
                 }}
             />
         </div>

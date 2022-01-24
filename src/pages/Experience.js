@@ -3,28 +3,37 @@ import { useParams } from 'react-router-dom';
 import Carousel from '../components/Carousel';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
-import { getExperienceById } from '../lib/storage';
+import { getExperienceById, getExperienceOwner, setExperienceViewed } from '../lib/storage';
 
 function Experience() {
 
     const { experienceId } = useParams();
-    const [experience, setExperience] = useState({});
-    const [images, setImages] = useState([]);     
+    const [experience, setExperience] = useState({});  
 
     useEffect(() => {
 
         getExperienceById(experienceId).then(data => {
-            setExperience(data.details)
-            setImages(data.images)
+            if (!data.details || !data.images) {console.log('this experience does not exist'); return;}
+            const exp = data.details
+            exp.images = data.images
+            getExperienceOwner(exp.owner).then(res => {
+                exp.owner = res
+                setExperience(exp)
+            })
+            setExperienceViewed(experienceId)
+            
         })
 
     }, [])
 
-    // useEffect(() => {
-    //     if (!experience) return 
-    //     const experienceOwner = experience.owner
-    //     console.log(experienceOwner)
-    // }, [experience])
+    useEffect(() => {
+        // if (!experience) return 
+        // const experienceOwner = experience.owner
+        // console.log(experienceOwner)
+        console.log(experience)
+    }, [experience])
+
+    
 
     return (
         <div className='w-full h-full'>
@@ -32,25 +41,30 @@ function Experience() {
                 <Header/>
                 <div className='w-full h-full flex flex-col justify-around'>
                     <h1 className='font-bold text-3xl py-14'>{experience?.title}</h1>
-                    <div className='flex flex-wrap-reverse'>
+                    <div className='flex flex-wrap-reverse justify-between'>
                         <div className='grow'>
                             <h1 className='font-bold text-lg mb-5'>More on the subject 👇</h1>
-                            <p className='mb-10'>{experience?.description}</p>
-                            <div className='space-y-2 font-semibold'>
+                            <p className=''>{experience?.description}</p>
+                            <div className='space-y-2 font-semibold mt-16'>
                                 <p>Total price: {experience?.price}</p>
                                 <p>This experience is in {experience?.location}</p>
                                 <p>{experience?.minAge ? `The minimum age is ${experience.minAge}` : 'There is no age limit! Family approved 💖'}</p>
                                 <p>{experience?.peopleLimit ? `The number of people allowed by your host is ${experience.peopleLimit}` : null}</p>
                             </div>
                         </div>
-                        {/* TODO: implement owner profile */}
-                        {/* <div className='grow w-full'>
+                        {experience.owner && <div className='grow space-y-2 mb-12 flex flex-col items-center md:items-end'>
                             <h1 className='font-bold text-2xl'>Meet the Host 🪅</h1>
-                            <img className='w-100 h-100 bg-black' src=''/>
-                        </div> */}
+                            <img className='w-40 h-40 bg-black rounded-2xl' src={experience.owner.picture}/>
+                            <h1 className='text-lg'>{experience.owner.name}</h1>
+                        </div>}
                     </div>
                 </div>
-                <Carousel label='Here, take a look! 😎' items={images?.map((url, i) => <Image url={url} key={i}/>)}/>
+                <Carousel label='Here, take a look! 😎' items={experience?.images?.map((url, i) => {
+                    return <Image url={url} key={i}/>
+                })}/>
+                {/* {experience?.images.forEach((url, i) => {
+                    <Image url={url} key={i}/>
+                })} */}
             </div>
             <Footer/>
         </div>
@@ -61,9 +75,15 @@ export default Experience;
 
 
 function Image({url}) {
+
+    const [loaded, setLoaded] = useState(false)
+    
+    useEffect(() => {
+    }, [loaded])
+
     return(
         <div className='bg-gray-900 p-2 group w-fit h-fit'>
-            <img src={url} className="w-fit h-[350px] md:h-[250px] object-contain group-hover:opacity-75"/>
+            <img src={url} className={`w-fit h-[350px] md:h-[250px] object-contain group-hover:opacity-75 `} onLoad={() => setLoaded(true)}/>
         </div>
     )
 }

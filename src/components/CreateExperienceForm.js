@@ -52,7 +52,7 @@ function CreateExperienceForm({experienceId, setParentState}) {
                     experienceDescription: '',
                     price: '',
                     minAge: '',
-                    location: '',
+                    locations: [],
                     peopleLimit: '',
                 }}
                 validate={values => {
@@ -68,7 +68,7 @@ function CreateExperienceForm({experienceId, setParentState}) {
                     if (!values.price) {
                         errors.price = 'Required';
                     }
-                    if (!values.location) {
+                    if (values.locations.length < 1) {
                         errors.location = 'Required';
                     }
                     if (images.length < 1) {
@@ -92,6 +92,8 @@ function CreateExperienceForm({experienceId, setParentState}) {
                         });
                     });
 
+                    console.log(values.locations)
+
                     setDoc(doc(db, `experiences/${values.experienceId}`), {
                         owner: doc(db, `users/${user.uid}`),
                         createdOn: new Date().valueOf(),
@@ -99,7 +101,7 @@ function CreateExperienceForm({experienceId, setParentState}) {
                         description: values.experienceDescription,
                         price: values.price,
                         minAge: values.minAge,
-                        location: values.location,
+                        location: values.locations,
                         peopleLimit: values.peopleLimit,
                     })
 
