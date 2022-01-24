@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { userState } from "../atoms/userAtom"
 import Carousel from "../components/Carousel"
@@ -5,22 +6,39 @@ import ExperienceCard from "../components/ExperienceCard"
 import Footer from "../components/Footer"
 import Header from "../components/Header"
 import UserStatistics from "../components/UserStatistics"
+import { auth } from "../lib/firebase"
+import { getExperienceById, getUserDetails, getUserExperiences } from "../lib/storage"
+import upload_profile from '../upload_profile.svg'
 
 function Profile() {
 
-    const user = useRecoilValue(userState)
+    const user = auth.currentUser
+    const [topExperiences, setTopExperiences] = useState([])
+    const [userDetails, setUserDetails] = useState({})
 
     const handleDragStart = (e) => e.preventDefault();
 
-    const items = [
-        <ExperienceCard image='https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/80/93/65/caption.jpg?w=300&h=300&s=1' price={209} description='Moab Xtreme 3-Hour Experience' rating={5} rating_count={315} onDragStart={handleDragStart} role="presentation"/>,
-        <ExperienceCard image='https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/d2/4c/ec/cappadocia-hot-air-balloon.jpg?w=300&h=-1&s=1' price={119} description='Capadocia Hot Air Balloon Flight' rating={5} rating_count={487} onDragStart={handleDragStart} role="presentation"/>,
-        <ExperienceCard image='https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/99/c0/5d/surfer-factory.jpg?w=300&h=300&s=1' price={77} description='Surface Lessons with Professional Trainer' rating={4} rating_count={129} onDragStart={handleDragStart} role="presentation"/>,
-        <ExperienceCard image='https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/48/b5/46/caption.jpg?w=300&h=300&s=1' price={199} description='Ocean Wild-life Encounter in Cape Town' rating={5} rating_count={223} onDragStart={handleDragStart} role="presentation"/>,
-        <ExperienceCard image='https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/57/c2/7b/caption.jpg?w=300&h=300&s=1' price={117} description='Colloseum Underground and Ancient Rome Semi-Private Tour MAX 6 PEOPLE GUARANTEED' rating={5} rating_count={92} onDragStart={handleDragStart} role="presentation"/>,
+    useEffect(() => {
 
-        //   <Experience image={} price={} description={} rating={} rating_count={} onDragStart={handleDragStart} role="presentation" />,
-    ];
+        setTopExperiences([])
+
+        getUserExperiences(user.uid).then(data => {
+            data.forEach(({id}) => {
+                getExperienceById(id).then(experience => {
+                    setTopExperiences(experiences => [...experiences, {id:id, experience:experience}])
+                })
+            })
+        })
+
+        getUserDetails(user.uid).then(data => {
+            setUserDetails(data.data())
+        })
+        
+    }, [user])
+
+    const items = topExperiences.map(item => {
+        return <ExperienceCard id={item.id} image={item.experience.images[0]} price={item.experience.details.price} description={item.experience.details.title} rating={5} rating_count={315} onDragStart={handleDragStart} role="presentation"/>
+    })
 
     return (
         <div className="">
@@ -30,13 +48,17 @@ function Profile() {
                     <div className="flex flex-col flex-1 font-bold mb-20 space-y-2">
                         <h1 className="text-5xl">{user.displayName}</h1>
                         <h1 className="text-lg">{user.email}</h1>
-                        <h1 className="italic">Creator</h1>
+                        <h1 className="italic">{userDetails.type != 'regular' ? userDetails.type : null}</h1>
                     </div>
-                    <img src={user.photoUrl || user.reloadUserInfo.photoUrl} className="w-32 h-32 bg-gray-800 p-2 rounded-2xl"/>
+                    <div className="w-32 h-32 bg-gray-800 p-2 rounded-2xl group relative transition-long">
+                        <img src={user.reloadUserInfo.photoUrl || user.photoURL} className="w-full h-full group-hover:brightness-50 transition-long"/>
+                        <img src={upload_profile} className="hidden absolute w-1/2 h-1/2 -translate-y-full group-hover:inline transition-long"/>
+                        <p className="opacity-0 group-hover:opacity-100 whitespace-nowrap w-full h-full transition-long">Upload photo</p>
+                    </div>
                 </div>
                 <UserStatistics/>
                 <div className='w-full h-fit'>
-                    <Carousel label='Your Top Rated Experiences' items={items}/>
+                    <Carousel label={topExperiences.length > 1 ? 'Your Newest Experiences' : 'You havent created any experiences yet... What are you waiting for?'} items={items}/>
                 </div>
             </div>
             <Footer/>

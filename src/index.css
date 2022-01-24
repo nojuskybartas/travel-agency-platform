@@ -42,4 +42,8 @@ code {
   .button {
     @apply text-white h-10 items-center flex justify-center rounded-3xl w-1/3 cursor-pointer;
   }
+
+  .transition-long {
+    @apply transition-all ease-in-out duration-700;
+  }
 }

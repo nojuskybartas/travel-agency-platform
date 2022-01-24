@@ -6,7 +6,7 @@ import { auth } from '../lib/firebase';
 
 const RequireAuth = ({ children }) => {
 
-    const user = useRecoilValue(userState)
+    const user = auth.currentUser
     
     // const location = useLocation();
     // const user = auth.currentUser

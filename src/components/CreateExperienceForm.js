@@ -1,72 +1,140 @@
 import React, { useEffect } from 'react';
-import { Formik, Form } from 'formik';
+import { Formik, Form, validateYupSchema } from 'formik';
 import ImageUpload from './form/ImageUpload';
 import { useState } from 'react';
-import { storage } from '../lib/firebase';
+import { auth, db, storage } from '../lib/firebase';
 import { ref, uploadBytes, uploadString } from 'firebase/storage';
+import TitleInput from './form/TitleInput';
+import DescriptionInput from './form/DescriptionInput';
+import DetailsInput from './form/DetailsInput';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../atoms/userAtom';
+import { doc, setDoc } from 'firebase/firestore';
+import LoginModal from './LoginModal';
+import { getCurrentUserData } from '../lib/user';
+import ErrorModal from './ErrorModal';
+import { getUserDetails } from '../lib/storage';
+import { useNavigate } from 'react-router-dom';
 
-function CreateExperienceForm({setParentState}) {
+function CreateExperienceForm({experienceId, setParentState}) {
 
     const [imagesInBytes, setImagesInBytes] = useState([])
-
+    const [images, setImages] = useState([])
+    const user = auth.currentUser
     const [state, setState] = useState(0)
+    const [error, setError] = useState()
+    const [showLogin, setShowLogin] = useState(false)
+    const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     console.log(imagesInBytes)
-    // }, [imagesInBytes])
+    useState(() => {
+
+        if (!user) {
+            setShowLogin(true)
+        }
+
+        getUserDetails(user?.uid).then(details => {
+            if (details.data().type === 'regular') {
+                setError('Seems like you havent fully completed the registration to become a creator')
+                // return <ErrorModal errorMessage='Seems like you havent completed the registration'/>
+            }
+        })
+
+    }, [user])
 
     return (
         <div className='w-full h-full'>
+            {error && <ErrorModal errorMessage={error} destination='/'/>}
+            <LoginModal showLogin={showLogin} setShowLogin={setShowLogin} label='Sign in to create your first experience'/>
             <Formik
                 initialValues={{ 
-                    experienceId: null,
-                    image: imagesInBytes, 
-                    title: '',
-                    description: '',
-                    price: 0,
+                    experienceId: experienceId,
+                    experienceTitle: '',
+                    experienceDescription: '',
+                    price: '',
+                    minAge: '',
+                    location: '',
+                    peopleLimit: '',
                 }}
-                // validate={values => {
-                //     const errors = {};
-                //     if (!values.email) {
-                //     errors.email = 'Required';
-                //     } else if (
-                //     !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                //     ) {
-                //     errors.email = 'Invalid email address';
-                //     }
-                //     return errors;
-                // }}
+                validate={values => {
+                    const errors = {};
+                    if (!values.experienceTitle) {
+                        errors.experienceTitle = 'Required';
+                    } else if (values.experienceTitle?.length < 12) {
+                        errors.experienceTitle = 'Please provide a more descriptive title'
+                    }
+                    if (!values.experienceDescription) {
+                        errors.experienceDescription = 'Required';
+                    }
+                    if (!values.price) {
+                        errors.price = 'Required';
+                    }
+                    if (!values.location) {
+                        errors.location = 'Required';
+                    }
+                    if (images.length < 1) {
+                        errors.images = 'Please upload at least 1 photo'
+                    }
+                    return errors;
+                }}
+
                 onSubmit={(values, { setSubmitting }) => {
 
-                    values.experienceId = new Date().valueOf();
+                    // values.experienceId = new Date().valueOf() * Math.floor(Math.random() * 10000);
 
+                    // Image upload to firebase storage
                     const metadata = {
                         contentType: 'image/jpg'
                       };
-
-                    // Image upload to firebase storage
                     imagesInBytes.forEach((image, i) => {
-                        console.log('img>',image)
                         const storageRef = ref(storage, `experiences/${values.experienceId}/images/${i}.jpg`)
                         uploadBytes(storageRef, image, metadata).then((snapshot) => {
-                            console.log('Uploaded a blob or file!');
+                            // console.log(snapshot);
                         });
                     });
 
-                    console.log(imagesInBytes)
+                    setDoc(doc(db, `experiences/${values.experienceId}`), {
+                        owner: doc(db, `users/${user.uid}`),
+                        createdOn: new Date().valueOf(),
+                        title: values.experienceTitle,
+                        description: values.experienceDescription,
+                        price: values.price,
+                        minAge: values.minAge,
+                        location: values.location,
+                        peopleLimit: values.peopleLimit,
+                    })
+
+                    // gs://tripadvisor-clone-432ea.appspot.com/experiences/13306346441310012/images/0.jpg
+
+                    // setDoc(doc(db, `users/${user.uid}/created_experiences/${values.experienceId}`), {
+                    //     title: values.experienceTitle,
+                    //     description: values.experienceDescription,
+                    //     price: values.price,
+                    //     minAge: values.minAge,
+                    //     location: values.location,
+                    //     peopleLimit: values.peopleLimit,
+                    // })
+
+                    setDoc(doc(db, `users/${user.uid}/created_experiences/${values.experienceId}`), {
+                        ref: doc(db, `experiences/${values.experienceId}`)
+                    })
+
                     setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                        setSubmitting(false);
-                    }, 400);
+                        setParentState('submitted_success')
+                        // alert(JSON.stringify(values, null, 2));
+                        // setSubmitting(false);
+                    }, 1000);
                 }}
             >
-            {({ values }) => (
-            <Form className='flex flex-col items-center justify-center w-full h-fit'>
-                {state === 0 && <ImageUpload imagesInBytes={imagesInBytes} setImagesInBytes={setImagesInBytes}/>}
+            {({ values, isValid, isSubmitting }) => (
+            <Form className='flex flex-col items-center justify-center w-full h-full'>
+                {<div className={`w-full h-full ${state != 0 && 'hidden'}`}><ImageUpload images={images} setImages={setImages} setImagesInBytes={setImagesInBytes} name='images'/></div>}
+                {state === 1 && <TitleInput name='experienceTitle'/>}
+                {state === 2 && <DescriptionInput name='experienceDescription'/>}
+                {state === 3 && <DetailsInput/>}
 
-                <div className='flex w-full h-16 items-center justify-center space-x-14 p-6'>
-                    <button className='button bg-gray-800 hover:bg-gray-900' onClick={(e) => {if(state===0) {setParentState('menu')} setState(state-1); e.preventDefault()}}>Back</button>
-                    <button className='button bg-gray-800 hover:bg-gray-900' onClick={(e) => {setState(state+1); e.preventDefault()}}>Next</button>
+                <div className='flex w-full h-16 items-center justify-center space-x-14 p-6 mb-14'>
+                    <button className={`button bg-gray-800 hover:bg-gray-900 transition-all ease-in-out duration-1000 ${isValid && state===3 && !isSubmitting && 'w-1/4'} ${isSubmitting && 'w-0 opacity-0'}`} onClick={(e) => {if(state === 0 ) {setParentState('menu')} setState(state-1); e.preventDefault()}}>{state === 0 ? 'Back to menu' : 'Back'}</button>
+                    <button type={(state === 3 && isValid) ? 'submit' : 'button'} className={`button bg-gray-800 hover:bg-gray-900 transition-all ease-in-out duration-1000 ${isValid && state===3 && !isSubmitting && 'w-1/2'} ${isSubmitting && 'w-full'}`} onClick={(e) => {if(state != 3 ) {setState(state+1); e.preventDefault()}}}>{state === 3 ? isSubmitting ? 'Submitting...' : 'Submit!' : 'Next'}</button>
                 </div>
             </Form>
             )}

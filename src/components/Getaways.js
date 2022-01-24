@@ -16,7 +16,7 @@ function Getaways() {
 
     return (
         <div className='w-full h-fit'>
-            <Carousel label='Dream your next trip' items={items}/>
+            <Carousel label='Dream your next trip' infinite items={items}/>
         </div>
     )
 }

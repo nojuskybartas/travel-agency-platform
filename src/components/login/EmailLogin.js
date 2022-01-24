@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { auth } from '../../lib/firebase';
 
 
-function EmailLogin({handleLoginShow}) {
+function EmailLogin({handleLoginShow, setParentState}) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -23,18 +23,6 @@ function EmailLogin({handleLoginShow}) {
 
     }
 
-    const register = e => {
-        e.preventDefault()
-
-        createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            if (userCredential) {
-                handleLoginShow()
-            }
-        })
-        .catch(error => alert(error.message))
-    }
-
     return (
         <div className='w-full h-fit flex flex-col'>
             <form className='space-y-4 flex flex-col'>
@@ -48,11 +36,11 @@ function EmailLogin({handleLoginShow}) {
             </form>
             <div className='flex items-center justify-between w-full'>
                 <div className='bg-gray-200 w-full h-1'></div>
-                <p className='w-full whitespace-nowrap p-2'>Not a member?</p>
+                <p className='w-fit whitespace-nowrap p-2'>Not a member?</p>
                 <div className='bg-gray-200 w-full h-1'></div>
             </div>
             
-            <button className='underline font-semibold' onClick={register}>Create account</button>
+            <button className='underline font-semibold' onClick={() => setParentState('registerEmail')}>Create account</button>
         </div>
     )
 }

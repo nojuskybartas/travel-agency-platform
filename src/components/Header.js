@@ -5,14 +5,14 @@ import Login from './Login'
 import { useRecoilValue } from 'recoil'
 import { userState } from '../atoms/userAtom'
 
-function Header () {
+function Header ({transparent}) {
 
     const navigate = useNavigate()
     const location = useLocation()
     
 
     return (
-        <div className="sticky top-0 z-10 w-full h-14 flex justify-between items-center p-2 mt-3 bg-white">
+        <div className={`sticky top-0 z-10 w-full h-14 flex justify-between items-center p-2 mt-3 ${!transparent && 'bg-white'}`}>
             <Link to='/'>
                 <img src={logo} className='w-fit h-10'/>
             </Link>
@@ -26,10 +26,12 @@ function Header () {
                     </div>
                 }
 
-                <div className='headerRight'>
+                {location.pathname != '/experiences' && 
+                <div className='headerRight' onClick={() => navigate('/experiences')}>
                     <SearchCircleIcon className='w-6 h-6'/>
                     <p className='headerText-primary'>Experience</p>
                 </div>
+                }
 
                 <Login/>
             </div>
