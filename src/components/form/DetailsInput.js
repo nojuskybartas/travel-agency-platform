@@ -1,7 +1,10 @@
 import { MinusIcon, PlusIcon } from '@heroicons/react/outline';
 import { useFormikContext } from 'formik';
 import React, { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { userState } from '../../atoms/userAtom';
 import GooglePlacesInput from './GooglePlacesInput';
+import NumberInput from './NumberInput';
 import RadioSelect from './RadioSelect';
 import TextInput from './TextInput';
 
@@ -9,6 +12,7 @@ function DetailsInput() {
 
     const { values, submitForm } = useFormikContext()
     const [locationCount, setLocationCount] = useState(0)
+    const [userData, setUserData] = useRecoilState(userState)
 
     return (
         <div className='w-full h-full flex flex-col items-center bg-white'>
@@ -37,9 +41,10 @@ function DetailsInput() {
             
             {/* {Array((values.locations.length)+1).fill().map((_, i) => (<GooglePlacesInput key={i} name='locations'/>))} */}
 
-            <TextInput name='peopleLimit' placeholder='People Limit' />
-            <TextInput name='price' placeholder='Price' />
-            <TextInput name='minAge' placeholder='Min-age 👀' />
+            <NumberInput name='peopleLimit' placeholder='People Limit' />
+            {/* <TextInput name='price' placeholder='Price' type='number'/> */}
+            <NumberInput name='price' placeholder={`Price (${userData.financials.currency})`}/>
+            <NumberInput name='minAge' placeholder='Min-age 👀' />
 
             <p className='w-3/4 p-6'>Add price options (fixed / indicative), google location api, also maybe an option to say whether the start / end points are the same, or some sort of requirements</p>
         </div>

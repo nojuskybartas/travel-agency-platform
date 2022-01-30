@@ -1,10 +1,10 @@
-import { collection, doc, endAt, getDoc, getDocs, limit, orderBy, query, setDoc, startAt } from "firebase/firestore"
+import { collection, doc, endAt, getDoc, getDocs, limit, orderBy, query, setDoc, startAt, updateDoc, increment } from "firebase/firestore"
 import { getDownloadURL, getStorage, listAll, ref } from "firebase/storage"
 import { auth, db } from "./firebase"
 
 const storage = getStorage()
 
-const getImagesFromStorageUrl = async(url) => {
+export const getImagesFromStorageUrl = async(url) => {
 
     let images = []
 
@@ -47,7 +47,7 @@ const getImagesFromStorageUrl = async(url) => {
 export const setDefaultUserDetailsOnRegister = async(uid) => {
     const detailsRef = doc(db, `users/${uid}/account/details`)
     const detailsData = {
-        type: 'creator', // can be creator
+        type: 'regular', // can be creator
         picture: auth.currentUser.photoURL,
         name: auth.currentUser.displayName,
     }
@@ -65,12 +65,42 @@ export const setDefaultUserDetailsOnRegister = async(uid) => {
 
 }
 
-export const setCurrentUserProfilePicture = async() => {
-    const data = getUserDetails(auth.currentUser.uid)
-    data.picture = auth.currentUser.photoURL
+export const setCurrentUserProfilePicture = async(url) => {
+
     const detailsRef = doc(db, `users/${auth.currentUser.uid}/account/details`)
+
+    await updateDoc(detailsRef, {
+        picture: url
+    })
+}
+
+// export const updateCurrentUserProfilePicture = async(url) => {
+//     const data = await getUserDetails(auth.currentUser.uid)
+//     data.picture = url
+//     const detailsRef = doc(db, `users/${auth.currentUser.uid}/account/details`)
     
-    await setDoc(detailsRef, data);
+//     await setDoc(detailsRef, data);
+// }
+
+export const refreshUserData = async() => {
+    const details = await getCurrentUserDetails()
+    const financials = await getCurrentUserFinancials()
+
+    const data = details.data()
+    return {
+        ...data,
+        financials: financials.data()
+    }
+  }
+
+export const getCurrentUserDetails = async() => {
+    const data = await getUserDetails(auth.currentUser.uid)
+    return data
+}
+
+export const getCurrentUserFinancials = async() => {
+    const data = await getUserFinancials(auth.currentUser.uid)
+    return data
 }
 
 export const getUserDetails = async(uid) => {
@@ -129,9 +159,15 @@ export const getExperienceOwner = async(ownerRef) => {
 }
 
 export const setExperienceViewed = async(id) => {
-    getDoc(doc(db, `experiences/${id}`)).then(res => {
-        const data = res.data()
-        data.viewCount ? data.viewCount+=1 : data.viewCount = 1
-        setDoc(doc(db, `experiences/${id}`), data)
+
+    updateDoc(doc(db, `experiences/${id}`), {
+        viewCount: increment(1)
     })
+
+
+    // getDoc(doc(db, `experiences/${id}`)).then(res => {
+    //     const data = res.data()
+    //     data.viewCount ? data.viewCount+=1 : data.viewCount = 1
+    //     setDoc(doc(db, `experiences/${id}`), data)
+    // })
 }

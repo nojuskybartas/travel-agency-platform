@@ -15,8 +15,9 @@ import { getCurrentUserData } from '../lib/user';
 import ErrorModal from './ErrorModal';
 import { getUserDetails } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
+import { convertCurrency } from '../lib/currency';
 
-function CreateExperienceForm({experienceId, setParentState}) {
+function CreateExperienceForm() {
 
     const [imagesInBytes, setImagesInBytes] = useState([])
     const [images, setImages] = useState([])
@@ -25,8 +26,10 @@ function CreateExperienceForm({experienceId, setParentState}) {
     const [error, setError] = useState()
     const [showLogin, setShowLogin] = useState(false)
     const navigate = useNavigate()
+    const userData = useRecoilValue(userState)
 
-    useState(() => {
+
+    useEffect(() => {
 
         if (!user) {
             setShowLogin(true)
@@ -47,7 +50,7 @@ function CreateExperienceForm({experienceId, setParentState}) {
             <LoginModal showLogin={showLogin} setShowLogin={setShowLogin} label='Sign in to create your first experience'/>
             <Formik
                 initialValues={{ 
-                    experienceId: experienceId,
+                    experienceId: new Date().valueOf() * Math.floor(Math.random() * 10000),
                     experienceTitle: '',
                     experienceDescription: '',
                     price: '',
@@ -69,7 +72,7 @@ function CreateExperienceForm({experienceId, setParentState}) {
                         errors.price = 'Required';
                     }
                     if (values.locations.length < 1) {
-                        errors.location = 'Required';
+                        errors.locations = 'Required';
                     }
                     if (images.length < 1) {
                         errors.images = 'Please upload at least 1 photo'
@@ -94,34 +97,31 @@ function CreateExperienceForm({experienceId, setParentState}) {
 
                     console.log(values.locations)
 
-                    setDoc(doc(db, `experiences/${values.experienceId}`), {
-                        owner: doc(db, `users/${user.uid}`),
-                        createdOn: new Date().valueOf(),
-                        title: values.experienceTitle,
-                        description: values.experienceDescription,
-                        price: values.price,
-                        minAge: values.minAge,
-                        location: values.locations,
-                        peopleLimit: values.peopleLimit,
+                    convertCurrency(values.price, userData.financials.currency.toLowerCase(), 'eur')
+                    .then((currencyAdjustedPrice) => {
+                        console.log(currencyAdjustedPrice)
+                        setDoc(doc(db, `experiences/${values.experienceId}`), {
+                            owner: doc(db, `users/${user.uid}`),
+                            createdOn: new Date().valueOf(),
+                            title: values.experienceTitle,
+                            description: values.experienceDescription,
+                            price: currencyAdjustedPrice,
+                            minAge: values.minAge,
+                            locations: values.locations,
+                            peopleLimit: values.peopleLimit,
+                        })
                     })
-
-                    // gs://tripadvisor-clone-432ea.appspot.com/experiences/13306346441310012/images/0.jpg
-
-                    // setDoc(doc(db, `users/${user.uid}/created_experiences/${values.experienceId}`), {
-                    //     title: values.experienceTitle,
-                    //     description: values.experienceDescription,
-                    //     price: values.price,
-                    //     minAge: values.minAge,
-                    //     location: values.location,
-                    //     peopleLimit: values.peopleLimit,
-                    // })
 
                     setDoc(doc(db, `users/${user.uid}/created_experiences/${values.experienceId}`), {
                         ref: doc(db, `experiences/${values.experienceId}`)
                     })
 
                     setTimeout(() => {
-                        setParentState('submitted_success')
+
+                        // SUCCESS MODAL
+
+
+                        // setParentState('submitted_success')
                         // alert(JSON.stringify(values, null, 2));
                         // setSubmitting(false);
                     }, 1000);
@@ -135,8 +135,31 @@ function CreateExperienceForm({experienceId, setParentState}) {
                 {state === 3 && <DetailsInput/>}
 
                 <div className='flex w-full h-16 items-center justify-center space-x-14 p-6 mb-14'>
-                    <button className={`button bg-gray-800 hover:bg-gray-900 transition-all ease-in-out duration-1000 ${isValid && state===3 && !isSubmitting && 'w-1/4'} ${isSubmitting && 'w-0 opacity-0'}`} onClick={(e) => {if(state === 0 ) {setParentState('menu')} setState(state-1); e.preventDefault()}}>{state === 0 ? 'Back to menu' : 'Back'}</button>
-                    <button type={(state === 3 && isValid) ? 'submit' : 'button'} className={`button bg-gray-800 hover:bg-gray-900 transition-all ease-in-out duration-1000 ${isValid && state===3 && !isSubmitting && 'w-1/2'} ${isSubmitting && 'w-full'}`} onClick={(e) => {if(state != 3 ) {setState(state+1); e.preventDefault()}}}>{state === 3 ? isSubmitting ? 'Submitting...' : 'Submit!' : 'Next'}</button>
+                    <button className={`button bg-gray-800 hover:bg-gray-900 transition-all ease-in-out duration-500 
+                                    ${state === 0 && 'opacity-0 cursor-default'}
+                                    ${isValid && state===3 && !isSubmitting && 'w-1/4'} 
+                                    ${isSubmitting && 'w-0 opacity-0'}`} 
+                        onClick={(e) => {
+                            if (state != 0 ) {
+                                setState(state-1)
+                            }; 
+                            e.preventDefault()
+                        }}>
+                    Back
+                    </button>
+                    <button 
+                        type={(state === 3 && isValid) ? 'submit' : 'button'} 
+                        className={`button bg-gray-800 hover:bg-gray-900 transition-all ease-in-out duration-1000 
+                                    ${isValid && state===3 && !isSubmitting && 'w-1/2'} 
+                                    ${isSubmitting && 'w-full'}`} 
+                        onClick={(e) => {
+                            if (state != 3 ) {
+                                setState(state+1); 
+                                e.preventDefault()
+                            }}}
+                        >
+                        {state === 3 ? isSubmitting ? 'Submitting...' : 'Submit!' : 'Next'}
+                    </button>
                 </div>
             </Form>
             )}
