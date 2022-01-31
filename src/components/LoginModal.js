@@ -11,7 +11,7 @@ import { userState } from '../atoms/userAtom';
 import EmailRegister from './login/EmailRegister';
 import { auth } from '../lib/firebase';
 
-function LoginModal({showLogin, setShowLogin, label}) {
+function LoginModal({showLogin, setShowLogin, label, onExit}) {
 
     const [state, setState] = useState('loginMenu')
     const user = auth.currentUser
@@ -20,6 +20,7 @@ function LoginModal({showLogin, setShowLogin, label}) {
     const handleLoginShow = () => {
         setState('loginMenu')
         setShowLogin(!showLogin)
+        if (onExit) onExit()
     }
 
     useEffect(() => {

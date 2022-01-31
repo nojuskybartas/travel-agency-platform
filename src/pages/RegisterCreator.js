@@ -1,5 +1,5 @@
 import { Form, Formik } from 'formik';
-import React from 'react';
+import { useState } from 'react';
 import Footer from '../components/Footer';
 import TextInput from '../components/form/TextInput';
 import Header from '../components/Header';
@@ -15,12 +15,18 @@ import { ref, uploadBytes } from 'firebase/storage';
 import { getImagesFromStorageUrl } from '../lib/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import SuccessModal from '../components/SuccessModal';
+import LoginModal from '../components/LoginModal';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterCreator() {
+
+    const [showLogin, setShowLogin] = useState(!auth.currentUser)
+    const navigate = useNavigate()
     
     return (
 
     <div>
+    <LoginModal showLogin={showLogin} setShowLogin={setShowLogin} label='Register an account first to become a creator' onExit={() => navigate('/create')}/>
     <div className="max-w-[1080px] h-full ml-auto mr-auto space-y-6 sm:px-2 sm:py-2">
         <Header/>
         <div className='text-center justify-center items-center flex flex-col w-full h-full'>

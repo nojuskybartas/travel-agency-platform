@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Login from './Login'
 import { useRecoilValue } from 'recoil'
 import { userState } from '../atoms/userAtom'
+import NavBar from './NavBar'
 
 function Header ({transparent}) {
 
@@ -13,6 +14,8 @@ function Header ({transparent}) {
 
     return (
         <div className={`sticky top-0 z-10 w-full h-14 flex justify-between items-center p-2 mt-3 ${!transparent && 'bg-white'}`}>
+            <NavBar />
+
             <Link to='/'>
                 <img src={logo} className='w-fit h-10'/>
             </Link>
@@ -35,7 +38,6 @@ function Header ({transparent}) {
 
                 <Login/>
             </div>
-            
         </div>
     )
 }

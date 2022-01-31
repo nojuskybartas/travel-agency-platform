@@ -13,9 +13,9 @@ function CreateExperience() {
     return (
         <div>
             <div className="max-w-[1080px] h-full ml-auto mr-auto space-y-6 sm:px-2 sm:py-2 flex flex-col justify-between items-center">
-                <Header transparent/>
+                <Header/>
                 <div className='w-full h-[80vh]'>
-                    {userData?.type === 'regular' ? <SignUpCreator/> : <CreateExperienceForm/>}
+                    {userData?.type !== 'creator' ? <SignUpCreator/> : <CreateExperienceForm/>}
 
                 </div>
             </div>

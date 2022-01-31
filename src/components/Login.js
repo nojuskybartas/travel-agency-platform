@@ -34,7 +34,7 @@ function Login() {
     
 
     return (
-        <div className='w-full h-10'>
+        <div className='w-full h-10 hidden md:inline'>
             <div className='headerRight w-fit h-10 top-0 bg-black text-white hover:bg-gray-800 group relative'>
                 <div className='font-bold ml-auto mr-auto' onClick={handleLoginShow}>{user ? `Hello, ${user.displayName || user.email}` : 'Sign In'}</div>
                 {user && <Submenu/>}

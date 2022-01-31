@@ -1,5 +1,10 @@
 import axios, * as others from 'axios'
 
+export const getConversionRatesEUR = async() => {
+    const data = await axios.get(`https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur.json`)
+    return data.data['eur']
+}
+
 export const convertCurrency = async(amount, from, to) => {
     const data = await axios.get(`https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${from}.json`)
     const priceInfo = data.data[from]
@@ -7,7 +12,8 @@ export const convertCurrency = async(amount, from, to) => {
     return convertedPrice
 }
 
-export const getFormatedPrice = async(price, currency) => {
+
+export const getFormatedPrice = (price, currency) => {
     if (Number(price) === 0) {
         return null
     }
@@ -20,7 +26,7 @@ export const getFormatedPrice = async(price, currency) => {
         //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
     });
 
-    const priceInUserCurrency = await convertCurrency(price, 'eur', currency.toLowerCase())
-    return formatter.format(priceInUserCurrency)
+    // const priceInUserCurrency = await convertCurrency(price, 'eur', currency.toLowerCase())
+    return formatter.format(price)
 
 }

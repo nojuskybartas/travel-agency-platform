@@ -24,30 +24,13 @@ function CreateExperienceForm() {
     const user = auth.currentUser
     const [state, setState] = useState(0)
     const [error, setError] = useState()
-    const [showLogin, setShowLogin] = useState(false)
-    const navigate = useNavigate()
     const userData = useRecoilValue(userState)
 
 
-    useEffect(() => {
-
-        if (!user) {
-            setShowLogin(true)
-        }
-
-        getUserDetails(user?.uid).then(details => {
-            if (details.data().type === 'regular') {
-                setError('Seems like you havent fully completed the registration to become a creator')
-                // return <ErrorModal errorMessage='Seems like you havent completed the registration'/>
-            }
-        })
-
-    }, [user])
 
     return (
         <div className='w-full h-full'>
-            {error && <ErrorModal errorMessage={error} destination='/'/>}
-            <LoginModal showLogin={showLogin} setShowLogin={setShowLogin} label='Sign in to create your first experience'/>
+            {/* {error && <ErrorModal errorMessage={error} destination='/'/>} */}
             <Formik
                 initialValues={{ 
                     experienceId: new Date().valueOf() * Math.floor(Math.random() * 10000),

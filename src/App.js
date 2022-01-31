@@ -3,8 +3,10 @@ import { cloneDeep } from "lodash";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import { conversionRateAtom } from "./atoms/currencyAtom";
 import { userState } from "./atoms/userAtom";
 import RequireAuth from "./components/RequireAuth";
+import { getConversionRatesEUR } from "./lib/currency";
 import { auth } from "./lib/firebase";
 import { getCurrentUserDetails, getCurrentUserFinancials, getUserDetails, getUserFinancials, refreshUserData, setDefaultUserDetailsOnRegister } from "./lib/storage";
 import { getCurrentUserData } from "./lib/user";
@@ -19,8 +21,14 @@ import RegisterCreator from "./pages/RegisterCreator";
 function App() {
 
   const [userData, setUserData] = useRecoilState(userState)
+  const [conversionRates, setConversionRates] = useRecoilState(conversionRateAtom)
 
   useEffect(() => {
+
+    getConversionRatesEUR().then(res => {
+      setConversionRates(res)
+    })
+
     onAuthStateChanged(auth, authUser => {
       if (authUser) {
         // const user = auth.currentUser

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { conversionRateAtom } from '../atoms/currencyAtom';
 import { userState } from '../atoms/userAtom';
 import Carousel from '../components/Carousel';
 import Footer from '../components/Footer';
@@ -15,6 +16,18 @@ function Experience() {
     const [experience, setExperience] = useState({});  
     const [price, setPrice] = useState();
     const [userData, setUserData] = useRecoilState(userState)
+    const currencyRates = useRecoilValue(conversionRateAtom)
+    const [currency, setCurrency] = useState('eur')
+    const [currencyAdjustedPrice, setCurrencyAdjustedPrice] = useState()
+
+    useEffect(() => {
+        setCurrencyAdjustedPrice(experience?.price * currencyRates[currency.toLowerCase()])
+
+    }, [currency, currencyRates, experience])
+
+    useEffect(() => {
+        setCurrency(userData?.financials ? userData.financials.currency : 'eur')
+    }, [userData]);
 
     useEffect(() => {
 
@@ -39,11 +52,11 @@ function Experience() {
         // console.log(experience)
     }, [experience])
 
-    useEffect(() => {
-        getFormatedPrice(experience?.price, userData?.financials?.currency || 'EUR').then(res => {
-            setPrice(res)
-        })
-    }, [userData, experience])
+    // useEffect(() => {
+    //     getFormatedPrice(experience?.price, userData?.financials?.currency || 'EUR').then(res => {
+    //         setPrice(res)
+    //     })
+    // }, [userData, experience])
 
     
 
@@ -58,7 +71,7 @@ function Experience() {
                             <h1 className='font-bold text-lg mb-5'>More on the subject 👇</h1>
                             <p className=''>{experience?.description}</p>
                             <div className='space-y-2 font-semibold mt-16'>
-                                <p>{price ? `Total price: ${price}` : 'Free'}</p>
+                                <p>Total price: {getFormatedPrice(currencyAdjustedPrice, currency)}</p>
                                 <p>This experience is in {experience?.locations}</p>
                                 <p>{experience?.minAge ? `The minimum age is ${experience.minAge}` : 'There is no age limit! Family approved 💖'}</p>
                                 <p>{experience?.peopleLimit ? `The number of people allowed by your host is ${experience.peopleLimit}` : null}</p>
