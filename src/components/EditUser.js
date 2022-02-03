@@ -131,6 +131,11 @@ function EditUser({show, setShow}) {
                 <XCircleIcon className='w-12 h-12 hover:scale-110' onClick={handleLoginShow}/>
                 <CheckCircleIcon className='w-12 h-12 hover:scale-110' onClick={() => submitForm()}/>
             </div>
+
+            <div className='w-full h-fit flex justify-between mt-7 md:hidden'>
+                <button type='button' className='button bg-pink-700' onClick={handleLoginShow}>Cancel</button>
+                <button type='submit' className='button bg-gray-900' onClick={() => submitForm()}>Submit</button>
+            </div>
             {/* {isSubmitting && <SuccessModal successMessage='You have successfully signed up as a creator! We are super excited to see what you&#180;ll share with us' destination='/create'/>} */}
 
         </Form>)}
