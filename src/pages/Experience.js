@@ -14,6 +14,7 @@ import { auth } from '../lib/firebase';
 import { countryArray, countryObject } from '../lib/nationalities';
 import { getExperienceById, getExperienceOwner, getUserDetails, getUserFinancials, setExperienceViewed } from '../lib/storage';
 import LoadingIndicator from '../components/LoadingIndicator'
+import EditExperience from '../components/EditExperience';
 
 function Experience() {
 
@@ -23,6 +24,8 @@ function Experience() {
     const currencyRates = useRecoilValue(conversionRateAtom)
     const [currency, setCurrency] = useState('eur')
     const [currencyAdjustedPrice, setCurrencyAdjustedPrice] = useState()
+    const [userIsOwner, setUserIsOwner] = useState()
+    const [showEditor, setShowEditor] = useState(false)
 
     useEffect(() => {
         setCurrencyAdjustedPrice(experience?.price * currencyRates[currency.toLowerCase()])
@@ -38,6 +41,7 @@ function Experience() {
         trackPromise(
         getExperienceById(experienceId).then(exp => {
             if (!exp) {console.log('this experience does not exist'); setExperience(null); return;}
+            setUserIsOwner(exp.owner.id === auth.currentUser.uid)
             getExperienceOwner(exp.owner).then(res => {
                 exp.owner = res
                 setExperience(exp)
@@ -50,7 +54,7 @@ function Experience() {
         // if (!experience) return 
         // const experienceOwner = experience.owner
         // console.log(experienceOwner)
-        console.log(experience)
+        // console.log(experience)
         
         // console.log()
     }, [experience])
@@ -62,8 +66,12 @@ function Experience() {
                 <Header/>
                 {experience ? <>
                 <LoadingIndicator/>
+                <EditExperience show={showEditor} setShow={setShowEditor} experience={experience}/>
                 <div className='w-full h-full flex flex-col justify-around'>
-                    <h1 className='font-bold text-3xl py-14 break-words'>{experience?.title}</h1>
+                    <div className='w-full h-fit flex space-x-8 font-bold text-3xl py-14 items-center'>
+                        <h1 className='break-words'>{experience?.title}</h1>
+                        {userIsOwner && <h3 className='underline italic text-2xl hover:scale-110 cursor-pointer transition-all ease-out' onClick={() => setShowEditor(true)}>Edit</h3>}
+                    </div>
                     <div className='flex flex-wrap-reverse justify-between'>
                         <div className='w-full md:w-2/3'>
                             <h1 className='font-bold text-lg mb-5'>More on the subject 👇</h1>

@@ -16,10 +16,13 @@ import { getImagesFromStorageUrl, refreshUserData } from '../lib/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import ReactModal from 'react-modal';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/outline';
+import { conversionRateAtom } from '../atoms/currencyAtom';
+import YoutubeEmbed from './YoutubeEmbed';
 
-function EditUser({show, setShow}) {
+function EditExperience({show, setShow, experience}) {
 
     const [userDetails, setUserDetails] = useRecoilState(userState)
+    const currencyRates = useRecoilValue(conversionRateAtom)
 
     const handleLoginShow = () => {
         setShow(!show)
@@ -33,7 +36,7 @@ function EditUser({show, setShow}) {
     return (
         <ReactModal
         isOpen={show}
-        className='loginModal md:w-5/6 md:h-1/2 overflow-y-scroll scrollbar-hide'
+        className='loginModal md:w-5/6 md:h-5/6 overflow-y-scroll scrollbar-hide'
         overlayClassName='loginModalOverlay'
         onRequestClose={handleLoginShow}
         shouldCloseOnOverlayClick={false}
@@ -43,68 +46,69 @@ function EditUser({show, setShow}) {
         {/* <CheckCircleIcon className='absolute bottom-2 right-2 rounded-full w-12 h-12 '/> */}
         <Formik
             initialValues={{ 
-                    dateOfBirth: userDetails.dateOfBirth,
-                    showAge: userDetails.showAge,
-                    address: userDetails.address,
-                    nationality: userDetails.nationality,
-                    profession: userDetails.profession,
-                    currency: userDetails?.financials.currency,
-                    motivation: userDetails.motivation,
-                    picture: null,
-                    name: userDetails.name
+                experienceTitle: experience.title,
+                experienceDescription: experience.description,
+                price: experience.price * currencyRates[userDetails.financials.currency.toLowerCase()],
+                minAge: experience.minAge,
+                locations: experience.locations,
+                peopleLimit: experience.peopleLimit,
             }}
             
 
             onSubmit={(values, { setSubmitting }) => {
 
-                if (userDetails.type !== 'regular') {
-                    updateDoc(doc(db, `users/${auth.currentUser.uid}/account/details`), {
-                        profession: values.profession,
-                        nationality: values.nationality,
-                        address: values.address,
-                        dateOfBirth: values.dateOfBirth,
-                        motivation: values.motivation,
-                        showAge: values.showAge
-                    })
-                }
+                console.log(values)
 
-                updateDoc(doc(db, `users/${auth.currentUser.uid}/account/financials`), {
-                    currency: values.currency
-                })
+            //     if (userDetails.type !== 'regular') {
+            //         updateDoc(doc(db, `users/${auth.currentUser.uid}/account/details`), {
+            //             profession: values.profession,
+            //             nationality: values.nationality,
+            //             address: values.address,
+            //             dateOfBirth: values.dateOfBirth,
+            //             motivation: values.motivation,
+            //             showAge: values.showAge
+            //         })
+            //     }
 
-                // Image upload to firebase storage
-                const metadata = {
-                    contentType: 'image/jpg'
-                };
+            //     updateDoc(doc(db, `users/${auth.currentUser.uid}/account/financials`), {
+            //         currency: values.currency
+            //     })
 
-                if (values.picture) {
-                    const storageRef = ref(storage, `users/${auth.currentUser.uid}/profile/profileImage.jpg`)
-                    uploadBytes(storageRef, values.picture, metadata).then((snapshot) => {
-                        getImagesFromStorageUrl(`users/${auth.currentUser.uid}/profile`).then(picture => {
-                            updateDoc(doc(db, `users/${auth.currentUser.uid}/account/details`), {
-                                picture: picture[0]
-                            })                 
-                            refreshUserData().then(data => {
-                                setUserDetails(data)
-                                handleLoginShow()
-                            })        
+            //     // Image upload to firebase storage
+            //     const metadata = {
+            //         contentType: 'image/jpg'
+            //     };
+
+            //     if (values.picture) {
+            //         const storageRef = ref(storage, `users/${auth.currentUser.uid}/profile/profileImage.jpg`)
+            //         uploadBytes(storageRef, values.picture, metadata).then((snapshot) => {
+            //             getImagesFromStorageUrl(`users/${auth.currentUser.uid}/profile`).then(picture => {
+            //                 updateDoc(doc(db, `users/${auth.currentUser.uid}/account/details`), {
+            //                     picture: picture[0]
+            //                 })                 
+            //                 refreshUserData().then(data => {
+            //                     setUserDetails(data)
+            //                     handleLoginShow()
+            //                 })        
                             
-                        })
-                    });
-                } else {
-                    refreshUserData().then(data => {
-                        setUserDetails(data)
-                        handleLoginShow()
-                    })
-                }
+            //             })
+            //         });
+            //     } else {
+            //         refreshUserData().then(data => {
+            //             setUserDetails(data)
+            //             handleLoginShow()
+            //         })
+            //     }
             }}
         >
         {({ values, isValid, isSubmitting, setValues, submitForm }) => (
         <Form className='w-full h-full p-2 relative'>
-            <div className='w-full h-fit md:h-full flex flex-wrap-reverse justify-start'> 
+            <div className='w-full h-fit object-contain'> 
+
+                <YoutubeEmbed embedId='dQw4w9WgXcQ'/>
                 
                 <div className='flex flex-col w-full md:w-1/2 h-full justify-center items-center'>
-                    {userDetails.type !== 'regular' && <>
+                    {/* {userDetails.type !== 'regular' && <>
                     <div className='flex w-full flex-wrap md:flex-nowrap space-y-6 sm:space-y-0 justify-around'>
                         <DatePickerField name='dateOfBirth'/>
                         <BoxSelect name='showAge' label='Show age'/>
@@ -113,13 +117,13 @@ function EditUser({show, setShow}) {
                     <CountrySelect name='nationality'/>
                     <GooglePlacesInput name='address' label='Address'/>
                     <TextInput name='profession' placeholder='Profession'/></>}
-                    <CurrencySelector name='currency'/>
+                    <CurrencySelector name='currency'/> */}
                     {/* <MotivationInput name='motivation'/> */}
                 </div>
                 <div className='flex flex-col w-full md:w-1/2 h-full items-center justify-start'>
                     {/* <img src='' className='w-48 h-48'/> */}
-                    <PictureUpload name='picture' imageURL={userDetails.picture}/>
-                    <h1>Click to change photo</h1>
+                    {/* <PictureUpload name='picture' imageURL={userDetails.picture}/> */}
+                    {/* <h1>Click to change photo</h1> */}
                 </div>
                 
                 {/* <button className='absolute bg-gray-800 rounded-full text-white hover:bg-gray-700 hover:scale-110' type='submit'>Submit</button> */}
@@ -143,4 +147,4 @@ function EditUser({show, setShow}) {
         );
     }
 
-export default EditUser;
+export default EditExperience;

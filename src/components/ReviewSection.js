@@ -7,7 +7,7 @@ import { timeSince } from "../lib/date";
 function ReviewSection({experienceId}) {
 
     const [reviews, setReviews] = useState([])
-    console.log(reviews)
+    
     useEffect(() => {
         setReviews([])
         getExperienceReviews(experienceId).then(res => {
@@ -19,6 +19,7 @@ function ReviewSection({experienceId}) {
                 })
             })
         })
+        console.log(reviews)
     }, [])
 
     return (
