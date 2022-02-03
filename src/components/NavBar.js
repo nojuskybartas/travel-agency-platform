@@ -2,6 +2,8 @@ import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import { signOut } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../atoms/userAtom';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import { auth } from '../lib/firebase';
 import LoginModal from './LoginModal';
@@ -11,6 +13,7 @@ function NavBar() {
     const [visible, setVisible] = useState(false)
     const [showLogin, setShowLogin] = useState(false)
     const { height, width } = useWindowDimensions();
+    const userDetails = useRecoilValue(userState)
 
     const navigate = useNavigate()
 
@@ -57,9 +60,9 @@ function NavBar() {
                     <li className='cursor-pointer custom-underline' onClick={() => redirect('/profile')}>
                         My Profile
                     </li>
-                    <li className='cursor-pointer custom-underline' onClick={() => redirect('/profile')}>
+                    {userDetails.type !== 'regular' && <li className='cursor-pointer custom-underline' onClick={() => redirect('/profile')}>
                         My Experiences
-                    </li>
+                    </li>}
                     <hr className='border-solid border-1 border-gray-900 w-full h-fit'/>
                     <li className='cursor-pointer custom-underline' onClick={() => {signOut(auth); handleShow()}}>
                         Sign Out

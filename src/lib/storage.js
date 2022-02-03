@@ -107,6 +107,7 @@ export const setCurrentUserProfilePicture = async(url) => {
 // }
 
 export const refreshUserData = async() => {
+    console.log('refreshing user data')
     const details = await getCurrentUserDetails()
     const financials = await getCurrentUserFinancials()
 

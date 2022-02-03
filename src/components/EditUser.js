@@ -62,14 +62,16 @@ function EditUser({show, setShow}) {
 
             onSubmit={(values, { setSubmitting }) => {
 
-                updateDoc(doc(db, `users/${auth.currentUser.uid}/account/details`), {
-                    profession: values.profession,
-                    nationality: values.nationality,
-                    address: values.address,
-                    dateOfBirth: values.dateOfBirth,
-                    motivation: values.motivation,
-                    showAge: values.showAge
-                })
+                if (userDetails.type !== 'regular') {
+                    updateDoc(doc(db, `users/${auth.currentUser.uid}/account/details`), {
+                        profession: values.profession,
+                        nationality: values.nationality,
+                        address: values.address,
+                        dateOfBirth: values.dateOfBirth,
+                        motivation: values.motivation,
+                        showAge: values.showAge
+                    })
+                }
 
                 updateDoc(doc(db, `users/${auth.currentUser.uid}/account/financials`), {
                     currency: values.currency
@@ -107,6 +109,7 @@ function EditUser({show, setShow}) {
             <div className='w-full h-fit md:h-full flex flex-wrap-reverse justify-start'> 
                 
                 <div className='flex flex-col w-full md:w-1/2 h-full justify-center items-center'>
+                    {userDetails.type !== 'regular' && <>
                     <div className='flex w-full flex-wrap md:flex-nowrap space-y-6 sm:space-y-0 justify-around'>
                         <DatePickerField name='dateOfBirth'/>
                         <BoxSelect name='showAge' label='Show age'/>
@@ -114,7 +117,7 @@ function EditUser({show, setShow}) {
 
                     <CountrySelect name='nationality'/>
                     <GooglePlacesInput name='address' label='Address'/>
-                    <TextInput name='profession' placeholder='Profession'/>
+                    <TextInput name='profession' placeholder='Profession'/></>}
                     <CurrencySelector name='currency'/>
                     {/* <MotivationInput name='motivation'/> */}
                 </div>
