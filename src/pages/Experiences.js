@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import Header from '../components/Header';
 import { getExperienceById, getExperiences, getExperiencesQuery } from '../lib/storage';
+import { trackPromise } from 'react-promise-tracker';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 function Experiences() {
 
@@ -13,6 +15,7 @@ function Experiences() {
 
         setExperiences([])
 
+        trackPromise(
         getExperiences().then(data => {
             data.forEach(({id}) => {
                 // console.log(e.id, '>', e.data())
@@ -20,7 +23,7 @@ function Experiences() {
                     setExperiences(experiences => [...experiences, {id:id, experience:experience}])
                 })
             })
-        })
+        }))
 
     }, [])
 
@@ -29,6 +32,7 @@ function Experiences() {
       <div className='w-full h-full'>
           <div className='max-w-[1080px] h-full ml-auto mr-auto bottom-0 space-y-6 sm:px-2 sm:py-2'>
           <Header/>
+          <LoadingIndicator/>
           <div className='w-full h-fit p-16 flex flex-wrap justify-center'>
             {experiences.map(item => (
                 // <ExperienceCard description={experience.details.description} price={experience.details.price} image={experience.images[0]} rating_count={0} rating={0}/>

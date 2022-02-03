@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { userState } from "../atoms/userAtom"
 import Carousel from "../components/Carousel"
+import EditUser from "../components/EditUser"
 import ExperienceCard from "../components/ExperienceCard"
 import Footer from "../components/Footer"
 import Header from "../components/Header"
@@ -15,9 +16,14 @@ function Profile() {
     const user = auth.currentUser
     const [topExperiences, setTopExperiences] = useState([])
     const [userDetails, setUserDetails] = useRecoilState(userState)
+    const [editUser, setEditUser] = useState(false)
     // const [userFinancials, setUserFinancials] = useState({})
 
-    const handleDragStart = (e) => e.preventDefault();    
+    const handleDragStart = (e) => e.preventDefault();  
+    
+    useEffect(() => {
+        console.log('updated!')
+    }, [userDetails])
 
     useEffect(() => {
 
@@ -54,6 +60,7 @@ function Profile() {
 
     return (
         <div className="">
+            <EditUser show={editUser} setShow={setEditUser}/>
             <div className="max-w-[1080px] h-full ml-auto mr-auto space-y-6 sm:px-2 sm:py-2">
                 <Header/>
                 <div className="flex p-2">
@@ -61,7 +68,8 @@ function Profile() {
                         <h1 className="text-5xl tracking-wide"><span className="italic">Hello,</span> {userDetails?.name}</h1>
                         <h1 className="text-lg">{user.email}</h1>
                         <h1 className="text-sm">Currency: {userDetails?.financials?.currency}</h1>
-                        <h1>{'' + userDetails?.motivation}</h1>
+                        {/* <h1>{'' + userDetails?.motivation}</h1> */}
+                        <button onClick={() => setEditUser(true)} className="w-fit">Edit user</button>
                     </div>
                     <div className="w-48 h-48 bg-gray-800 p-2 rounded-2xl relative transition-long">
                         <img src={userDetails?.picture} className="w-full h-full object-cover rounded-xl"/>

@@ -6,7 +6,7 @@ import { PhotoCameraBackOutlined } from '@mui/icons-material';
 function PictureUpload(props) {
 
     const [field, meta, helpers] = useField(props)
-    const [imageURL, setImageURL] = useState(null)
+    const [imageURL, setImageURL] = useState(props.imageURL)
 
     const getFilesFromEvent = e => {
         return new Promise(resolve => {
@@ -17,9 +17,8 @@ function PictureUpload(props) {
     }
 
     useEffect(() => {
-        if (field.value === null) return
+        if (field.value === null || field.value === '') return
       setImageURL(URL.createObjectURL(field.value))
-    //   console.log(imageURL)
     }, [field.value]);
     
 

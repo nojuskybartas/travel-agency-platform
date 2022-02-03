@@ -50,19 +50,27 @@ function Login() {
     )
 }
 
-function Submenu() {return (
+function Submenu() {
+
+  const userDetails = useRecoilValue(userState)
+  
+  return (
     <ul className="absolute hidden group-hover:inline-block top-7 bg-gray-900 rounded-lg transition-all ease-in-out h-fit w-5/6 p-2 z-[-1]">
       <Link to='/profile'>
         <li className="hover:bg-gray-600">
             <span>My Profile</span>
         </li>
       </Link>
+      {userDetails?.type === 'regular' && 
+      <Link to='/creator/register'>
+        <li className="hover:bg-gray-600">
+          <span>Register as Creator</span>
+        </li>
+      </Link>}
       <li className="hover:bg-gray-600" onClick={() => signOut(auth)}>
         <span>Sign Out</span>
       </li>
-      {/* <li className="hover:bg-gray-600">
-        <span>Our Portfolio</span>
-      </li> */}
+      
     </ul>
   )
 

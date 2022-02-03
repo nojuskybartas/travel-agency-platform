@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { trackPromise } from 'react-promise-tracker';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { conversionRateAtom } from '../atoms/currencyAtom';
@@ -12,6 +13,7 @@ import { getAgeInYears, getExperienceAge, timeSince } from '../lib/date';
 import { auth } from '../lib/firebase';
 import { countryArray, countryObject } from '../lib/nationalities';
 import { getExperienceById, getExperienceOwner, getUserDetails, getUserFinancials, setExperienceViewed } from '../lib/storage';
+import LoadingIndicator from '../components/LoadingIndicator'
 
 function Experience() {
 
@@ -33,14 +35,15 @@ function Experience() {
 
     useEffect(() => {
 
+        trackPromise(
         getExperienceById(experienceId).then(exp => {
-            if (!exp) {console.log('this experience does not exist'); return;}
+            if (!exp) {console.log('this experience does not exist'); setExperience(null); return;}
             getExperienceOwner(exp.owner).then(res => {
                 exp.owner = res
                 setExperience(exp)
             })
             setExperienceViewed(experienceId)
-        })        
+        }))
     }, [])
 
     useEffect(() => {
@@ -57,6 +60,8 @@ function Experience() {
         <div className='w-full h-full'>
             <div className="max-w-[1080px] h-full ml-auto mr-auto sm:px-2 sm:py-2 flex flex-col justify-between items-center">
                 <Header/>
+                {experience ? <>
+                <LoadingIndicator/>
                 <div className='w-full h-full flex flex-col justify-around'>
                     <h1 className='font-bold text-3xl py-14 break-words'>{experience?.title}</h1>
                     <div className='flex flex-wrap-reverse justify-between'>
@@ -96,6 +101,13 @@ function Experience() {
                 })}/>
 
                 <ReviewSection experienceId={experienceId}/>
+                
+                </>
+                :
+                <div className='w-full h-[80vh] flex flex-col justify-center items-center'>
+                    <h1>Uh oh! 😟</h1>
+                    <h2>This experience doesn't exist</h2>
+                </div>}
 
             </div>
             <Footer/>

@@ -90,6 +90,10 @@ input[type="number"] {
   transform: rotateY(180deg);
 }
 
+.clipCircle {
+  clip-path: circle(40px);
+}
+
 @layer components {
   .headerRight {
     @apply flex text-center cursor-pointer h-9 w-fit p-3 ml-2 whitespace-nowrap items-center rounded-3xl hover:bg-gray-300;

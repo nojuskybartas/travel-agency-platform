@@ -7,6 +7,8 @@ import Getaways from "../components/Getaways"
 import Header from "../components/Header"
 import SearchWBG from "../components/SearchWBG"
 import { getExperienceById, getExperiences } from "../lib/storage"
+import { trackPromise } from 'react-promise-tracker';
+import LoadingIndicator from "../components/LoadingIndicator"
 
 
 function Home () {
@@ -21,13 +23,14 @@ function Home () {
 
         setTopExperiences([])
 
+        trackPromise(
         getExperiences().then(data => {
             data.forEach(({id}) => {
                 getExperienceById(id).then(experience => {
                     setTopExperiences(experiences => [...experiences, {id:id, experience:experience}])
                 })
             })
-        })
+        }))
         
     }, [])
 
@@ -43,6 +46,7 @@ function Home () {
                 {/* <Experiences/> */}
                 <div className='w-full h-fit'>
                     <Carousel label='Explore Latest Experiences' infinite items={items}/>
+                    <LoadingIndicator/>
                 </div>
 
                 <Getaways/>
