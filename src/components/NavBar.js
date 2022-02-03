@@ -60,7 +60,7 @@ function NavBar() {
                     <li className='cursor-pointer custom-underline' onClick={() => redirect('/profile')}>
                         My Profile
                     </li>
-                    {userDetails.type !== 'regular' && <li className='cursor-pointer custom-underline' onClick={() => redirect('/profile')}>
+                    {userDetails?.type !== 'regular' && <li className='cursor-pointer custom-underline' onClick={() => redirect('/profile')}>
                         My Experiences
                     </li>}
                     <hr className='border-solid border-1 border-gray-900 w-full h-fit'/>

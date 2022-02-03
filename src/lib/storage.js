@@ -4,6 +4,11 @@ import { auth, db } from "./firebase"
 
 const storage = getStorage()
 
+export const getItemUrlFromStorage = async(storageRef) => {
+    const url = await getDownloadURL(storageRef)
+    return url
+}
+
 export const getImagesFromStorageUrl = async(url) => {
 
     let images = []

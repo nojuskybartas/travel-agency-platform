@@ -13,7 +13,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import LoginModal from './LoginModal';
 import { getCurrentUserData } from '../lib/user';
 import ErrorModal from './ErrorModal';
-import { getImagesFromStorageUrl, getUserDetails } from '../lib/storage';
+import { getImagesFromStorageUrl, getItemUrlFromStorage, getUserDetails } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
 import { convertCurrency } from '../lib/currency';
 import CreateExperienceSuccessModal from './CreateExperienceSuccessModal';
@@ -26,6 +26,7 @@ function CreateExperienceForm() {
     const [state, setState] = useState(0)
     const [error, setError] = useState()
     const userData = useRecoilValue(userState)
+    const [submitted, setSubmitted] = useState(false)
 
 
     return (
@@ -51,9 +52,6 @@ function CreateExperienceForm() {
                     if (!values.experienceDescription) {
                         errors.experienceDescription = 'Required';
                     }
-                    if (!values.price) {
-                        errors.price = 'Required';
-                    }
                     if (values.locations.length < 1) {
                         errors.locations = 'Required';
                     }
@@ -65,51 +63,48 @@ function CreateExperienceForm() {
 
                 onSubmit={(values, { setSubmitting }) => {
 
-                    // values.experienceId = new Date().valueOf() * Math.floor(Math.random() * 10000);
-
-                    // Image upload to firebase storage
                     const metadata = {
                         contentType: 'image/jpg'
-                      };
-                    imagesInBytes.forEach((image, i) => {
-                        const storageRef = ref(storage, `experiences/${values.experienceId}/images/${i}.jpg`)
-                        uploadBytes(storageRef, image, metadata).then((snapshot) => {
-                            getImagesFromStorageUrl(`experiences/${values.experienceId}/images`)
-                            .then(imageURLs => {
-                                convertCurrency(values.price, userData.financials.currency.toLowerCase(), 'eur')
-                                .then((currencyAdjustedPrice) => {
-                                    setDoc(doc(db, `experiences/${values.experienceId}`), {
-                                        owner: doc(db, `users/${user.uid}`),
-                                        createdOn: new Date().valueOf(),
-                                        title: values.experienceTitle,
-                                        description: values.experienceDescription,
-                                        price: currencyAdjustedPrice,
-                                        minAge: values.minAge,
-                                        locations: values.locations,
-                                        peopleLimit: values.peopleLimit,
-                                        images: imageURLs,
-                                        rating: 0,
-                                        ratingCount: 0,
-                                    })
-                                })
-                            })
-                        });
-                    });
+                    };
 
-                    setDoc(doc(db, `users/${user.uid}/created_experiences/${values.experienceId}`), {
-                        ref: doc(db, `experiences/${values.experienceId}`)
-                    })
+                    const uploadImages = async() => {
+                        const imageURLs = []
+                        await Promise.all(imagesInBytes.map(async(image, i) => {
+                            const storageRef = ref(storage, `experiences/${values.experienceId}/images/${i}.jpg`)
+                            await uploadBytes(storageRef, image, metadata)
+                            const imageUrl = await getItemUrlFromStorage(storageRef)
+                            imageURLs.push(imageUrl)
+                        }))
+                        return imageURLs
+                    }
+                    const uploadExperience = async() => {
+                        
+                        const imageURLs = await uploadImages()
 
-                    // setTimeout(() => {
+                        // const imageURLs = await getImagesFromStorageUrl(`experiences/${values.experienceId}/images`)
+                        const currencyAdjustedPrice = await convertCurrency(values.price, userData.financials.currency.toLowerCase(), 'eur')
+                        await setDoc(doc(db, `experiences/${values.experienceId}`), {
+                            owner: doc(db, `users/${user.uid}`),
+                            createdOn: new Date().valueOf(),
+                            title: values.experienceTitle,
+                            description: values.experienceDescription,
+                            price: currencyAdjustedPrice,
+                            minAge: values.minAge,
+                            locations: values.locations,
+                            peopleLimit: values.peopleLimit,
+                            images: imageURLs,
+                            rating: 0,
+                            ratingCount: 0,
+                        }) 
+                        await setDoc(doc(db, `users/${user.uid}/created_experiences/${values.experienceId}`), {
+                            ref: doc(db, `experiences/${values.experienceId}`)
+                        })
+                        setSubmitted(true)
 
-                    //     console.log('success')
-                    //     // SUCCESS MODAL
+                    }
 
+                    uploadExperience()
 
-                    //     // setParentState('submitted_success')
-                    //     // alert(JSON.stringify(values, null, 2));
-                    //     // setSubmitting(false);
-                    // }, 1000);
                 }}
             >
             {({ values, isValid, isSubmitting }) => (
@@ -148,7 +143,7 @@ function CreateExperienceForm() {
                     </button>
                 </div>
             </Form>
-            {isValid && isSubmitting && <CreateExperienceSuccessModal experienceId={values.experienceId}/>}
+            {submitted && <CreateExperienceSuccessModal experienceId={values.experienceId}/>}
             </div>
             )}
             {/* {({
