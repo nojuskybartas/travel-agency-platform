@@ -13,9 +13,10 @@ import { doc, setDoc } from 'firebase/firestore';
 import LoginModal from './LoginModal';
 import { getCurrentUserData } from '../lib/user';
 import ErrorModal from './ErrorModal';
-import { getUserDetails } from '../lib/storage';
+import { getImagesFromStorageUrl, getUserDetails } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
 import { convertCurrency } from '../lib/currency';
+import CreateExperienceSuccessModal from './CreateExperienceSuccessModal';
 
 function CreateExperienceForm() {
 
@@ -25,7 +26,6 @@ function CreateExperienceForm() {
     const [state, setState] = useState(0)
     const [error, setError] = useState()
     const userData = useRecoilValue(userState)
-
 
 
     return (
@@ -74,43 +74,46 @@ function CreateExperienceForm() {
                     imagesInBytes.forEach((image, i) => {
                         const storageRef = ref(storage, `experiences/${values.experienceId}/images/${i}.jpg`)
                         uploadBytes(storageRef, image, metadata).then((snapshot) => {
-                            // console.log(snapshot);
+                            getImagesFromStorageUrl(`experiences/${values.experienceId}/images`)
+                            .then(imageURLs => {
+                                convertCurrency(values.price, userData.financials.currency.toLowerCase(), 'eur')
+                                .then((currencyAdjustedPrice) => {
+                                    setDoc(doc(db, `experiences/${values.experienceId}`), {
+                                        owner: doc(db, `users/${user.uid}`),
+                                        createdOn: new Date().valueOf(),
+                                        title: values.experienceTitle,
+                                        description: values.experienceDescription,
+                                        price: currencyAdjustedPrice,
+                                        minAge: values.minAge,
+                                        locations: values.locations,
+                                        peopleLimit: values.peopleLimit,
+                                        images: imageURLs,
+                                        rating: 0,
+                                        ratingCount: 0,
+                                    })
+                                })
+                            })
                         });
                     });
-
-                    console.log(values.locations)
-
-                    convertCurrency(values.price, userData.financials.currency.toLowerCase(), 'eur')
-                    .then((currencyAdjustedPrice) => {
-                        console.log(currencyAdjustedPrice)
-                        setDoc(doc(db, `experiences/${values.experienceId}`), {
-                            owner: doc(db, `users/${user.uid}`),
-                            createdOn: new Date().valueOf(),
-                            title: values.experienceTitle,
-                            description: values.experienceDescription,
-                            price: currencyAdjustedPrice,
-                            minAge: values.minAge,
-                            locations: values.locations,
-                            peopleLimit: values.peopleLimit,
-                        })
-                    })
 
                     setDoc(doc(db, `users/${user.uid}/created_experiences/${values.experienceId}`), {
                         ref: doc(db, `experiences/${values.experienceId}`)
                     })
 
-                    setTimeout(() => {
+                    // setTimeout(() => {
 
-                        // SUCCESS MODAL
+                    //     console.log('success')
+                    //     // SUCCESS MODAL
 
 
-                        // setParentState('submitted_success')
-                        // alert(JSON.stringify(values, null, 2));
-                        // setSubmitting(false);
-                    }, 1000);
+                    //     // setParentState('submitted_success')
+                    //     // alert(JSON.stringify(values, null, 2));
+                    //     // setSubmitting(false);
+                    // }, 1000);
                 }}
             >
             {({ values, isValid, isSubmitting }) => (
+            <div className='w-full h-full'>
             <Form className='flex flex-col items-center justify-center w-full h-full'>
                 {<div className={`w-full h-full ${state != 0 && 'hidden'}`}><ImageUpload images={images} setImages={setImages} setImagesInBytes={setImagesInBytes} name='images'/></div>}
                 {state === 1 && <TitleInput name='experienceTitle'/>}
@@ -145,6 +148,8 @@ function CreateExperienceForm() {
                     </button>
                 </div>
             </Form>
+            {isValid && isSubmitting && <CreateExperienceSuccessModal experienceId={values.experienceId}/>}
+            </div>
             )}
             {/* {({
                 values,

@@ -1,4 +1,4 @@
-import { collection, doc, endAt, getDoc, getDocs, limit, orderBy, query, setDoc, startAt, updateDoc, increment } from "firebase/firestore"
+import { collection, doc, endAt, getDoc, getDocs, limit, orderBy, query, setDoc, startAt, updateDoc, increment, where } from "firebase/firestore"
 import { getDownloadURL, getStorage, listAll, ref } from "firebase/storage"
 import { auth, db } from "./firebase"
 
@@ -52,17 +52,41 @@ export const setDefaultUserDetailsOnRegister = async(uid) => {
         name: auth.currentUser.displayName,
     }
 
+    const financialsRef = doc(db, `users/${uid}/account/financials`)
+    const financialsData = {
+        currency: 'EUR',
+    }
+
+
     setDoc(detailsRef, detailsData).then(() => {
         setDoc(financialsRef, financialsData).then(() => {
             console.log('data set')
         });
     });
 
-    const financialsRef = doc(db, `users/${uid}/account/financials`)
-    const financialsData = {
-        currency: 'EUR',
+}
+
+export const setUserDetailsOnRegister = async(name, photoURL, currency) => {
+    const detailsRef = doc(db, `users/${auth.currentUser.uid}/account/details`)
+    const detailsData = {
+        type: 'regular', // can be creator
+        picture: photoURL,
+        name: name,
     }
 
+    const financialsRef = doc(db, `users/${auth.currentUser.uid}/account/financials`)
+    const financialsData = {
+        currency: currency,
+    }
+
+
+    await setDoc(detailsRef, detailsData)
+    await setDoc(financialsRef, financialsData)
+    // setDoc(detailsRef, detailsData).then(() => {
+    //     setDoc(financialsRef, financialsData).then(() => {
+    //         console.log('data set')
+    //     });
+    // });
 }
 
 export const setCurrentUserProfilePicture = async(url) => {
@@ -118,12 +142,9 @@ export const getUserFinancials = async(uid) => {
 export const getExperienceById = async(id) => {
     
     const experience = await getDoc(doc(db, `experiences/${id}`))
-    const images = await getImagesFromStorageUrl(`experiences/${id}/images`)
+    // const images = await getImagesFromStorageUrl(`experiences/${id}/images`)
 
-    return {
-        details: experience.data(),
-        images: images
-    }
+    return experience.data()
     
 }
 
@@ -170,4 +191,16 @@ export const setExperienceViewed = async(id) => {
     //     data.viewCount ? data.viewCount+=1 : data.viewCount = 1
     //     setDoc(doc(db, `experiences/${id}`), data)
     // })
+}
+
+export const getExperienceReviews = async(id) => {
+    const expReviewRef = collection(db, `experiences/${id}/reviews`)
+    const data = await getDocs(expReviewRef)
+    return data
+}
+
+
+export const getSearchResults = (input) => {
+    const q = query(experiencesRef, where('location', '==', input));
+    return q
 }

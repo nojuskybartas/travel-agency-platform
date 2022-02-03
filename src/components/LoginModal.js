@@ -52,11 +52,11 @@ function LoginModal({showLogin, setShowLogin, label, onExit}) {
             <h1 className={`font-semibold text-2xl w-2/3`}>{state==='loginMenu' ? label : state != 'registerEmail' ? 'Welcome back.' : null}</h1>
             
             <div className={`flex flex-col space-y-5 ${state!='loginMenu' && 'hidden'}`}>
-                <div className='loginButton' onClick={() => setState('loginGoogle')}>
+                <div className='loginButton opacity-70'>
                     <img src='https://static.tacdn.com/img2/google/G_color_40x40.png' className='w-6 h-6'/>
                     <button className='ml-[-5%] w-full'>Continue with Google</button>
                 </div>
-                <div className='loginButton' onClick={() => setState('loginFacebook')}>
+                <div className='loginButton opacity-70' > {/* onClick={() => setState('loginFacebook')} */}
                     <img src='https://static.tacdn.com/img2/facebook/icn-FB2.png' className='w-6 h-6'/>
                     <button className='ml-[-5%] w-full'>Continue with Facebook</button>
                 </div>

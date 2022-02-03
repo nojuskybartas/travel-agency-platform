@@ -33,7 +33,7 @@ function FooterElement({title, collapsable, ...props}) {
             </div>
             <div className="space-y-1">
                 {(visible || screenWidth>=768) && props.labels.map((label, i) => {
-                    return <p key={i} className="sb-underline cursor-pointer w-fit h-full">{label}</p>
+                    return <p key={i} className="custom-underline cursor-pointer w-fit h-full">{label}</p>
                 })}
             </div>
             <div className="text-sm text-gray-600">

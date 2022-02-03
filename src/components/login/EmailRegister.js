@@ -1,7 +1,9 @@
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useState } from 'react'
+import { useRecoilState } from 'recoil';
+import { userState } from '../../atoms/userAtom';
 import { auth } from '../../lib/firebase';
-import { setDefaultUserDetailsOnRegister } from '../../lib/storage';
+import { refreshUserData, setDefaultUserDetailsOnRegister, setUserDetailsOnRegister } from '../../lib/storage';
 
 
 function EmailRegister({handleLoginShow}) {
@@ -10,22 +12,35 @@ function EmailRegister({handleLoginShow}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [userData, setUserData] = useRecoilState(userState)
+
     const register = e => {
         e.preventDefault()
 
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             if (userCredential) {
-                updateProfile(userCredential.user, {
-                    displayName: name,
-                    photoURL: `https://avatars.dicebear.com/api/big-smile/${name}.svg`
-                }).then(() => {
+                setUserDetailsOnRegister(name, `https://avatars.dicebear.com/api/big-smile/${name}.svg`, 'EUR').then(() => {
                     console.log('updated user')
-                    setDefaultUserDetailsOnRegister(userCredential.uid).then(() => {
-                        console.log(auth.currentUser)
+                    refreshUserData().then(res => {
+                        setUserData(res)
                         handleLoginShow()
-                    })     
-                })           
+                    })
+                })
+
+                // updateProfile(userCredential.user, {
+                //     displayName: name,
+                //     photoURL: `https://avatars.dicebear.com/api/big-smile/${name}.svg`
+                // }).then(() => {
+                //     console.log('updated user')
+                //     setDefaultUserDetailsOnRegister(userCredential.uid).then(() => {
+                //         refreshUserData().then(data => {
+                //             setUserData(data)
+                //         })
+                //         console.log(auth.currentUser)
+                //         
+                //     })     
+                // })           
             }
         })
         .catch(error => alert(error.message))

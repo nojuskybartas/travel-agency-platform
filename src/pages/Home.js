@@ -15,6 +15,8 @@ function Home () {
 
     const handleDragStart = (e) => e.preventDefault();
 
+    console.log(topExperiences)
+
     useEffect(() => {
 
         setTopExperiences([])
@@ -30,7 +32,7 @@ function Home () {
     }, [])
 
     const items = topExperiences.map(item => {
-        return <ExperienceCard key={item.id} id={item.id} image={item.experience.images[0]} price={item.experience.details.price} description={item.experience.details.title} rating={5} rating_count={315} onDragStart={handleDragStart} role="presentation"/>
+        return <ExperienceCard key={item.id} id={item.id} image={item.experience.images[0]} price={item.experience.price} description={item.experience.title} rating={item.experience.rating} rating_count={item.experience.ratingCount} onDragStart={handleDragStart} role="presentation"/>
     })
 
     return (

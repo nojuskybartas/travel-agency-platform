@@ -5,7 +5,7 @@ import ReactModal from 'react-modal';
 import EmailLogin from './login/EmailLogin';
 import FacebookLogin from './login/FacebookLogin';
 import GoogleLogin from './login/GoogleLogin';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { userState } from '../atoms/userAtom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
@@ -18,6 +18,7 @@ function Login() {
     const [state, setState] = useState('loginMenu')
     const [showLogin, setShowLogin] = useState(false)
     const user = auth.currentUser
+    const [userDetails, setUserDetails] = useRecoilState(userState)
 
 
     const handleLoginShow = () => {
@@ -34,9 +35,9 @@ function Login() {
     
 
     return (
-        <div className='w-full h-10 hidden md:inline'>
-            <div className='headerRight w-fit h-10 top-0 bg-black text-white hover:bg-gray-800 group relative'>
-                <div className='font-bold ml-auto mr-auto' onClick={handleLoginShow}>{user ? `Hello, ${user.displayName || user.email}` : 'Sign In'}</div>
+        <div className='w-fit h-10 hidden md:inline'>
+            <div className='headerRight w-fit h-10 bg-black text-white hover:bg-gray-800 group relative'>
+                <div className='font-bold ml-auto mr-auto' onClick={handleLoginShow}>{user ? `Hello, ${userDetails?.name || user.email}` : 'Sign In'}</div>
                 {user && <Submenu/>}
                 
                 
@@ -50,7 +51,7 @@ function Login() {
 }
 
 function Submenu() {return (
-    <ul className="absolute hidden group-hover:inline-block top-7 bg-gray-900 rounded-lg transition-all ease-in-out  h-fit w-5/6 p-2 z-[-1]">
+    <ul className="absolute hidden group-hover:inline-block top-7 bg-gray-900 rounded-lg transition-all ease-in-out h-fit w-5/6 p-2 z-[-1]">
       <Link to='/profile'>
         <li className="hover:bg-gray-600">
             <span>My Profile</span>

@@ -12,7 +12,7 @@ import MotivationInput from '../components/form/MotivationInput';
 import PictureUpload from '../components/form/PictureUpload';
 import { auth, db, storage } from '../lib/firebase';
 import { ref, uploadBytes } from 'firebase/storage';
-import { getImagesFromStorageUrl } from '../lib/storage';
+import { getImagesFromStorageUrl, refreshUserData } from '../lib/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import SuccessModal from '../components/SuccessModal';
 import LoginModal from '../components/LoginModal';
@@ -113,7 +113,7 @@ function RegisterCreator() {
 
                 <button className='mt-10 w-1/3 h-10 bg-gray-800 rounded-3xl text-white hover:bg-gray-700 hover:scale-110' type='submit'>Submit</button>
             
-                {isSubmitting && <SuccessModal successMessage='You have successfully signed up as a creator! We are super excited to see what you&#180;ll share with us' destination='/'/>}
+                {isSubmitting && <SuccessModal successMessage='You have successfully signed up as a creator! We are super excited to see what you&#180;ll share with us' destination='/create'/>}
             
             </Form>)}
             </Formik>

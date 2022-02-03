@@ -35,6 +35,8 @@ function App() {
 
         const user = cloneDeep(authUser)
 
+        console.log(authUser.uid)
+
         // TODO: FOR DEV ONLY, REMOVE WHEN DEPLOY
         // setDefaultUserDetailsOnRegister(user.uid)
 
@@ -87,7 +89,7 @@ function App() {
 
 
   return (
-    <BrowserRouter>
+    
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path='/profile' element={<RequireAuth><Profile/></RequireAuth>}/>
@@ -97,7 +99,7 @@ function App() {
         <Route path="/experience/:experienceId" element={<Experience/>} />
         {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
-    </BrowserRouter>
+  
   );
 }
 

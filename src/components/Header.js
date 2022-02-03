@@ -13,14 +13,14 @@ function Header ({transparent}) {
     
 
     return (
-        <div className={`sticky top-0 z-10 w-full h-14 flex justify-between items-center p-2 mt-3 ${!transparent && 'bg-white'}`}>
+        <div className={`sticky top-0 z-10 w-full h-12 flex justify-between items-center p-2 ${!transparent && 'bg-white'}`}>
             <NavBar />
 
             <Link to='/'>
                 <img src={logo} className='w-fit h-10'/>
             </Link>
 
-            <div className='flex w-1/4 min-w-min max-w-md items-center justify-between'>
+            <div className='flex w-1/4 min-w-min max-w-md items-center justify-end'>
                 
                 {location.pathname != '/create' && 
                     <div className='headerRight' onClick={() => navigate('/create')}>
