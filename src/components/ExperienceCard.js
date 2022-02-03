@@ -35,7 +35,7 @@ function ExperienceCard({id, image, price, description, rating, rating_count}) {
                 {Array(5-rating).fill().map((_, i) => (<p key={i}><StarIconOutline className="w-4 h-4"/></p>))}
                 <p className="text-sm ml-2">{rating_count}</p>
             </div>}
-            <p className="font-semibold text-md">from {getFormatedPrice(currencyAdjustedPrice, currency)}</p>
+            <p className="font-semibold text-md">{getFormatedPrice(currencyAdjustedPrice, currency) || 'Free'}</p>
         </div>
     )
 }

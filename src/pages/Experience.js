@@ -69,7 +69,7 @@ function Experience() {
                             <h1 className='font-bold text-lg mb-5'>More on the subject 👇</h1>
                             <p className='break-words'>{experience?.description}</p>
                             <div className='space-y-2 font-semibold mt-16'>
-                                <p>Total price: {getFormatedPrice(currencyAdjustedPrice, currency)}</p>
+                                <p>Total price: {getFormatedPrice(currencyAdjustedPrice, currency) || 'Free'}</p>
                                 <p>This experience is in {experience?.locations}</p>
                                 <p>{experience?.minAge ? `The minimum age is ${experience?.minAge}` : 'There is no age limit! Family approved 💖'}</p>
                                 <p>{experience?.peopleLimit ? `The number of people allowed by your host is ${experience?.peopleLimit}` : null}</p>
@@ -127,7 +127,7 @@ function Image({url}) {
 
     return(
         <div className='bg-gray-900 p-2 group h-fit w-[350px] md:w-[450px]'>
-            <img src={url} className={`w-full h-[350px] md:h-fit object-contain group-hover:opacity-75 `} onLoad={() => setLoaded(true)}/>
+            <img src={url} className={`w-full h-[350px] md:h-fit max-h-[350px] object-contain group-hover:opacity-75 `} onLoad={() => setLoaded(true)}/>
         </div>
     )
 }
