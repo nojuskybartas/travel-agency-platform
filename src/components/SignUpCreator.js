@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { userState } from '../atoms/userAtom';
@@ -13,9 +13,11 @@ function SignUpCreator() {
     const [showLogin, setShowLogin] = useState(false)
     const [userData, setUserData] = useRecoilState(userState)
 
-    refreshUserData().then(data => {
-        setUserData(data)
-    })
+    useEffect(() => {
+        refreshUserData().then(data => {
+            setUserData(data)
+        })
+    }, [])
 
     const handleClick = () => {
         if (!auth.currentUser) {
