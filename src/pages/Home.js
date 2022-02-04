@@ -17,7 +17,7 @@ function Home () {
 
     const handleDragStart = (e) => e.preventDefault();
 
-    console.log(topExperiences)
+    // console.log(topExperiences)
 
     useEffect(() => {
 

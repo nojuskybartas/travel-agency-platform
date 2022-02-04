@@ -48,7 +48,7 @@ function EditExperience({show, setShow, experience}) {
             initialValues={{ 
                 experienceTitle: experience.title,
                 experienceDescription: experience.description,
-                price: experience.price * currencyRates[userDetails.financials.currency.toLowerCase()],
+                price: experience.price * currencyRates[userDetails?.financials ? userDetails.financials.currency : 'eur'],
                 minAge: experience.minAge,
                 locations: experience.locations,
                 peopleLimit: experience.peopleLimit,

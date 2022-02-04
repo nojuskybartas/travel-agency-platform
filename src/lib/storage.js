@@ -113,6 +113,7 @@ export const setCurrentUserProfilePicture = async(url) => {
 
 export const refreshUserData = async() => {
     console.log('refreshing user data')
+    if (!auth.currentUser) return null
     const details = await getCurrentUserDetails()
     const financials = await getCurrentUserFinancials()
 

@@ -36,8 +36,16 @@ function Experiences() {
           <div className='w-full h-fit p-16 flex flex-wrap justify-center'>
             {experiences.map(item => (
                 // <ExperienceCard description={experience.details.description} price={experience.details.price} image={experience.images[0]} rating_count={0} rating={0}/>
-                
-                <img src={item.experience.images[0]} key={item.id} className='w-[300px] md:w-[200px] h-[300px] md:h-[200px] object-cover hover:scale-110 p-1 rounded-lg shadow-md' onClick={() => navigate(`/experience/${item.id}`)}/>
+                <div className='flip-card w-[300px] md:w-[200px] h-[300px] md:h-[200px] cursor-pointer' key={item.id} onClick={() => navigate(`/experience/${item.id}`)}>
+                    <div className='w-full h-full flip-card-inner'>
+                        <div className='w-full h-full flip-card-front'>
+                            <img src={item.experience.images[0]} className='w-full h-full object-cover p-1 rounded-lg shadow-md'/>
+                        </div>
+                        <div className='w-full h-full flip-card-back flex items-center justify-center'>
+                            <h1 className='text-2xl text-green-200'>{item.experience.title}</h1>
+                        </div>
+                    </div>
+                </div>
             ))}
           </div>
         </div>

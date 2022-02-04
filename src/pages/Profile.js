@@ -13,10 +13,10 @@ import upload_profile from '../upload_profile.svg'
 
 function Profile() {
 
-    const user = auth.currentUser
     const [topExperiences, setTopExperiences] = useState([])
     const [userDetails, setUserDetails] = useRecoilState(userState)
     const [editUser, setEditUser] = useState(false)
+    const [items, setItems] = useState()
     // const [userFinancials, setUserFinancials] = useState({})
 
     const handleDragStart = (e) => e.preventDefault();  
@@ -29,7 +29,8 @@ function Profile() {
 
         setTopExperiences([])
 
-        getUserExperiences(user.uid).then(data => {
+        console.log(auth.currentUser)
+        getUserExperiences(auth.currentUser.uid).then(data => {
             data.forEach(({id}) => {
                 getExperienceById(id).then(experience => {
                     setTopExperiences(experiences => [...experiences, {id:id, experience:experience}])
@@ -52,11 +53,18 @@ function Profile() {
         //     setUserFinancials(data.data())
         // })
         
-    }, [user])
+    }, [userDetails])
 
-    const items = topExperiences.map(item => {
-        return <ExperienceCard id={item.id} image={item.experience.images[0]} price={item.experience.price} description={item.experience.title} rating={item.experience.rating} rating_count={item.experience.ratingCount} onDragStart={handleDragStart} role="presentation"/>
-    })
+    useEffect(() => {
+        if (topExperiences.length === 0) return
+        const items = topExperiences.map(item => {
+            console.log(item)
+            return <ExperienceCard id={item.id} image={item.experience.images[0]} price={item.experience.price} description={item.experience.title} rating={item.experience.rating} rating_count={item.experience.ratingCount} onDragStart={handleDragStart} role="presentation"/>
+        });
+        setItems(items)
+
+    }, [topExperiences]);
+    
 
     return (
         <div className="">
@@ -66,7 +74,7 @@ function Profile() {
                 <div className="flex p-2">
                     <div className="flex flex-col flex-1 font-bold mb-20 space-y-2">
                         <h1 className="text-5xl tracking-wide"><span className="italic">Hello,</span> {userDetails?.name}</h1>
-                        <h1 className="text-lg">{user.email}</h1>
+                        <h1 className="text-lg">{auth.currentUser.email}</h1>
                         <h1 className="text-sm">Currency: {userDetails?.financials?.currency}</h1>
                         {/* <h1>{'' + userDetails?.motivation}</h1> */}
                         <button onClick={() => setEditUser(true)} className="w-fit">Edit user</button>

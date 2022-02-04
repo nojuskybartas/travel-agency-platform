@@ -4,9 +4,7 @@ import { render } from 'react-dom';
 
 export function Autocomplete(props) {
   const containerRef = useRef();
-
-  console.log(containerRef)
-
+  
   useEffect(() => {
     if (!containerRef.current) {
       return undefined;

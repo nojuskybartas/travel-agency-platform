@@ -41,7 +41,8 @@ function Experience() {
         trackPromise(
         getExperienceById(experienceId).then(exp => {
             if (!exp) {console.log('this experience does not exist'); setExperience(null); return;}
-            setUserIsOwner(exp.owner.id === auth.currentUser.uid)
+            // if (auth.currentUser) {}
+            setUserIsOwner(exp.owner.id === auth.currentUser?.uid ? true : false)
             getExperienceOwner(exp.owner).then(res => {
                 exp.owner = res
                 setExperience(exp)
