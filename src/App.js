@@ -89,7 +89,7 @@ function App() {
 
 
   return (
-    
+    <div className="">
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path='/profile' element={<RequireAuth><Profile/></RequireAuth>}/>
@@ -99,7 +99,7 @@ function App() {
         <Route path="/experience/:experienceId" element={<Experience/>} />
         {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
-  
+    </div>
   );
 }
 

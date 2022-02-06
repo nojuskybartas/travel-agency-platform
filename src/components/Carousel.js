@@ -23,7 +23,7 @@ function Carousel({label, items, infinite}) {
     return (
         <div className='w-full h-fit'>
             <h1 className="font-bold text-2xl mt-10 mb-5">{label}</h1>
-            <AliceCarousel 
+            {items.length > 0 ? <AliceCarousel 
                 mouseTracking 
                 infinite={infinite}
                 autoWidth 
@@ -38,6 +38,11 @@ function Carousel({label, items, infinite}) {
                     return items?.length > 1 && <ArrowCircleRightIcon className='right-[-2vw] bg-white hover:bg-black hover:text-white rounded-full mr-3 w-12 h-12 absolute top-1/4'/>
                 }}
             />
+            :
+            <div className="h-32 w-fit">
+                <p className='italic'>No items to display...</p>
+            </div>
+            }
         </div>
     )
 }

@@ -1,10 +1,12 @@
-import logo from '../tripadvisor_logo.svg'
+import logo from '../logo_text_black.svg'
 import { PencilIcon, SearchCircleIcon } from '@heroicons/react/outline'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Login from './Login'
 import { useRecoilValue } from 'recoil'
 import { userState } from '../atoms/userAtom'
 import NavBar from './NavBar'
+
+
 
 function Header ({transparent}) {
 
@@ -13,11 +15,11 @@ function Header ({transparent}) {
     
 
     return (
-        <div className={`sticky top-0 z-10 w-full h-12 flex justify-between items-center p-2 ${!transparent && 'bg-white'}`}>
+        <div className={`sticky -top-0 z-10 w-full h-12 flex justify-between items-center rounded-b-md test-outline p-2 ${!transparent && 'bg-white'}`}>
             <NavBar />
 
             <Link to='/'>
-                <img src={logo} className='w-fit h-10'/>
+                <img src={logo} className='w-48 h-full'/>
             </Link>
 
             <div className='flex w-1/4 min-w-min max-w-md items-center justify-end'>

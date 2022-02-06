@@ -30,7 +30,7 @@ function SearchWBG() {
     }
 
     return (
-        <div className='w-full h-fit overflow-hidden relative group'>
+        <div className='w-full h-fit overflow-hidden relative group rounded-2xl'>
             {/* <InstantSearch searchClient={searchClient} indexName="appexperiencesearch"> */}
             <div className='bg-yellow-400 w-max h-fit'>
                 <img src={background_img} className='w-full h-full object-fit'/>

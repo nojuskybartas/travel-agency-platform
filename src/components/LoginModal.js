@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 import { useEffect, useState } from 'react'
-import logo from '../tripadvisor_logo.svg'
+import logo from '../logo512.png'
 import { ArrowLeftIcon, MailIcon, XIcon } from "@heroicons/react/outline"
 import EmailLogin from './login/EmailLogin';
 import FacebookLogin from './login/FacebookLogin';
