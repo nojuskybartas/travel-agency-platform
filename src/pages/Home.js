@@ -10,6 +10,8 @@ import { getExperienceById, getExperiences } from "../lib/storage"
 import { trackPromise } from 'react-promise-tracker';
 import LoadingIndicator from "../components/LoadingIndicator"
 import CityCard from "../components/CityCard"
+import MobileNav from "../components/MobileNav"
+import MainPageStructure from "../components/MainPageStructure"
 
 
 function Home () {
@@ -48,25 +50,17 @@ function Home () {
     ];
 
     return (
-        <div className="w-full h-full">
-            <div className="max-w-[1080px] h-full ml-auto mr-auto space-y-6 sm:px-2 test-outline">
-                <Header/>
-                <SearchWBG/>
-
-                
-
-                <div className='w-full h-fit test-outline'>
-                    <Carousel label='Explore Latest Experiences' infinite items={latestExperienceCards}/>
-                    <LoadingIndicator/>
-                </div>
-
-                <div className='w-full h-fit test-outline'>
-                    <Carousel label='Dream your next trip' infinite items={countryCards}/>
-                    <LoadingIndicator/>
-                </div>
+        <MainPageStructure>
+            <SearchWBG/>
+            <div className='w-full h-fit test-outline'>
+                <Carousel label='Explore Latest Experiences' infinite items={latestExperienceCards}/>
+                <LoadingIndicator/>
             </div>
-            <Footer/>
-        </div>
+            <div className='w-full h-fit test-outline'>
+                <Carousel label='Dream your next trip' infinite items={countryCards}/>
+                <LoadingIndicator/>
+            </div>
+        </MainPageStructure>
     )
 }
 

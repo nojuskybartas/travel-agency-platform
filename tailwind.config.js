@@ -8,7 +8,7 @@ module.exports = {
         'default': '1080px'
       },
       colors: {
-        primary: '',
+        primary: '#A393EB',
         secondary: '#875870',
       }
     },

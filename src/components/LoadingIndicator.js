@@ -7,7 +7,7 @@ const LoadingIndicator = props => {
     return (
         promiseInProgress && 
         <div className="w-full h-full flex justify-center items-center">
-            <ThreeDots color="#2BAD60" height="100" width="100" />
+            <ThreeDots color="#A393EB" height="100" width="100" />
         </div>
     );  
 }

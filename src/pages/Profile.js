@@ -6,6 +6,7 @@ import EditUser from "../components/EditUser"
 import ExperienceCard from "../components/ExperienceCard"
 import Footer from "../components/Footer"
 import Header from "../components/Header"
+import MainPageStructure from "../components/MainPageStructure"
 import UserStatistics from "../components/UserStatistics"
 import { auth } from "../lib/firebase"
 import { getCurrentUserDetails, getCurrentUserFinancials, getExperienceById, getUserDetails, getUserExperiences, getUserFinancials } from "../lib/storage"
@@ -67,11 +68,9 @@ function Profile() {
     
 
     return (
-        <div className="">
+        <MainPageStructure>
             <EditUser show={editUser} setShow={setEditUser}/>
-            <div className="max-w-[1080px] h-full ml-auto mr-auto space-y-6 sm:px-2 sm:py-2">
-                <Header/>
-                <div className="flex p-2">
+            <div className="flex p-2">
                     <div className="flex flex-col flex-1 font-bold mb-20 space-y-2">
                         <h1 className="text-5xl tracking-wide"><span className="italic">Hello,</span> {userDetails?.name}</h1>
                         <h1 className="text-lg">{auth.currentUser.email}</h1>
@@ -93,10 +92,7 @@ function Profile() {
                         <Carousel label={topExperiences.length >= 1 ? 'Your Latest Experiences' : 'You havent created any experiences yet... What are you waiting for?'} items={items}/>
                     </div>
                 </>}
-                
-            </div>
-            <Footer/>
-        </div>
+        </MainPageStructure>
     )
 }
 

@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { getAlgoliaResults } from '@algolia/autocomplete-js';
 import algoliasearch from 'algoliasearch';
 import { Autocomplete } from './Autocomplete';
 import '@algolia/autocomplete-theme-classic';
 import { MapIcon } from '@heroicons/react/outline';
+import useWindowDimensions from '../hooks/useWindowDimensions';
 
 const AutoCompleteSearchBar = ({navigate}) => {
 
+    const {width, height} = useWindowDimensions()
     const searchClient = algoliasearch('X7XNECEGSI', 'b7af155aabe7ac707bb4c945a37b584f');
 
     return (
         <Autocomplete
-        openOnFocus={true}
-        placeholder='Find your next best experience!'
+        placeholder={width > 768 ? 'Find your next best experience!' : 'Search experiences!'}
         getSources={({ query }) => [
         {
             sourceId: 'experiences',
@@ -31,10 +32,23 @@ const AutoCompleteSearchBar = ({navigate}) => {
             });
             },
             templates: {
+              
             item({ item, components }) {
                 return <ProductItem hit={item} components={components} navigate={navigate}/>;
             },
+            header() {
+              return (
+                <Fragment>
+                  <span className="aa-SourceHeaderTitle">Experiences</span>
+                  <div className="aa-SourceHeaderLine" />
+                </Fragment>
+              );
             },
+            noResults() {
+              return 'No experiences found';
+            },
+            },
+            
         },
         ]}
     />

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Navigate, Route, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../atoms/userAtom';
@@ -6,14 +6,14 @@ import { auth } from '../lib/firebase';
 
 const RequireAuth = ({ children }) => {
 
-    const user = auth.currentUser
+    const [user, setUser] = useState(auth.currentUser)
     
     // const location = useLocation();
     // const user = auth.currentUser
 
     
 
-    return user ? children : <Navigate to="/" />
+    return user ? children : <Navigate to="/welcome" />
 
 
     // if (!user) {

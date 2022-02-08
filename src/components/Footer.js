@@ -47,7 +47,7 @@ function FooterElement({title, collapsable, ...props}) {
 
 function Footer() {
     return (
-        <div className="flex justify-center bg-[#be948048] w-full h-fit">
+        <div className="hidden md:flex justify-center bg-[#be948048] w-full h-fit">
             <div className=" mb-10 w-full max-w-[1080px] flex flex-col justify-between md:flex-row space-y-2 p-4">
                 <FooterElement title="Contacts" labels={['Frequently asked questions', 'Contacts, branches, ATMs','Book a consultation','About Swedbank']} labels_small={['Some company', 'Address', 'Bank account info', 'Legal stuff']} collapsable={false}/>
                 <FooterElement title="Useful links" labels={['Frequently asked questions', 'Contacts, branches, ATMs','Book a consultation','About Swedbank']} collapsable={true}/>

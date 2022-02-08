@@ -6,14 +6,16 @@ import { ArrowLeftIcon, MailIcon, XIcon } from "@heroicons/react/outline"
 import EmailLogin from './login/EmailLogin';
 import FacebookLogin from './login/FacebookLogin';
 import GoogleLogin from './login/GoogleLogin';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { userState } from '../atoms/userAtom';
 import EmailRegister from './login/EmailRegister';
 import { auth } from '../lib/firebase';
+import { loginState } from '../atoms/navbarAtom';
 
-function LoginModal({showLogin, setShowLogin, label, onExit}) {
+function LoginModal({label, onExit}) {
 
     const [state, setState] = useState('loginMenu')
+    const [showLogin, setShowLogin] = useRecoilState(loginState)
     const user = auth.currentUser
 
 
@@ -72,7 +74,7 @@ function LoginModal({showLogin, setShowLogin, label, onExit}) {
             {state==='loginGoogle' && <GoogleLogin handleLoginShow={handleLoginShow}/>}
 
             <p className=' text-center text-xs'>
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  "
+            explored.life
             </p>
             
         </div>

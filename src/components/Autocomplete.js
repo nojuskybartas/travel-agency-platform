@@ -24,5 +24,5 @@ export function Autocomplete(props) {
     };
   }, [props]);
 
-  return <div className='w-full h-full' ref={containerRef} />;
+  return <div className='w-full h-full test-outline ' ref={containerRef} />;
 }

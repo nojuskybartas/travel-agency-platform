@@ -15,14 +15,14 @@ function Header ({transparent}) {
     
 
     return (
-        <div className={`sticky -top-0 z-10 w-full h-12 flex justify-between items-center rounded-b-md test-outline p-2 ${!transparent && 'bg-white'}`}>
-            <NavBar />
+        <div className={`sticky top-0 z-10 w-full h-14 flex justify-center md:justify-between items-center rounded-b-md test-outline p-2 ${!transparent && 'bg-white'}`}>
+            {/* <NavBar /> */}
 
             <Link to='/'>
                 <img src={logo} className='w-48 h-full'/>
             </Link>
 
-            <div className='flex w-1/4 min-w-min max-w-md items-center justify-end'>
+            <div className='hidden md:flex w-1/4 min-w-min max-w-md items-center justify-end'>
                 
                 {location.pathname != '/create' && 
                     <div className='headerRight' onClick={() => navigate('/create')}>

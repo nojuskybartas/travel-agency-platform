@@ -3,6 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDAmEmIsmK9SdQkx-6_0fvo-BQCCA9J2To",
@@ -23,3 +24,22 @@ const auth = getAuth();
 auth.useDeviceLanguage()
 const googleProvider = new GoogleAuthProvider();
 export { db, storage, auth, googleProvider };
+
+
+
+export const askForPermissionToReceiveNotifications = async () => {
+  try {
+    const messaging = getMessaging(firebaseApp)
+    const token = await getToken(messaging)
+    // await messaging.requestPermission();
+    // const token = await messaging.getToken();
+    console.log('Your token is:', token);
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload);
+      // ...
+    });
+    return token;
+  } catch (error) {
+    console.error(error);
+  }
+}

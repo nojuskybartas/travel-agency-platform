@@ -8,6 +8,7 @@ function EmailLogin({handleLoginShow, setParentState}) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate()
 
     const signIn = e => {
         e.preventDefault()
@@ -15,7 +16,7 @@ function EmailLogin({handleLoginShow, setParentState}) {
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             if (userCredential) {
-                // navigate('/')
+                navigate('/')
                 handleLoginShow()
             }
         })
@@ -40,7 +41,7 @@ function EmailLogin({handleLoginShow, setParentState}) {
                 <div className='bg-gray-200 w-full h-1'></div>
             </div>
             
-            <button className='underline font-semibold' onClick={() => setParentState('registerEmail')}>Create account</button>
+            <button disabled className='underline font-semibold' onClick={() => setParentState('registerEmail')}>Create account</button>
         </div>
     )
 }

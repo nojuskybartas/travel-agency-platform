@@ -14,8 +14,12 @@ import CreateExperience from "./pages/CreateExperience";
 import Experience from "./pages/Experience";
 import Experiences from "./pages/Experiences";
 import Home from "./pages/Home";
+import Inbox from "./pages/Inbox";
+import Intro from "./pages/Intro";
+import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import RegisterCreator from "./pages/RegisterCreator";
+import SavedExperiences from "./pages/SavedExperiences";
 
 
 function App() {
@@ -91,12 +95,16 @@ function App() {
   return (
     <div className="">
       <Routes>
-        <Route path="/" element={<Home/>}/>
+        <Route path="/welcome" element={<Intro/>}/>
+        <Route path='/' element={<RequireAuth><Home/></RequireAuth>}/>
+        <Route path="/login" element={<RequireAuth><Login/></RequireAuth>}/>
         <Route path='/profile' element={<RequireAuth><Profile/></RequireAuth>}/>
-        <Route path="/create" element={<CreateExperience/>}/>
-        <Route path="/creator/register" element={<RegisterCreator/>}/> 
-        <Route path="/experiences" element={<Experiences/>}/>
-        <Route path="/experience/:experienceId" element={<Experience/>} />
+        <Route path="/create" element={<RequireAuth><CreateExperience/></RequireAuth>}/>
+        <Route path="/creator/register" element={<RequireAuth><RegisterCreator/></RequireAuth>}/>
+        <Route path="/experiences" element={<RequireAuth><Experiences/></RequireAuth>}/>
+        <Route path="/experience/:experienceId" element={<RequireAuth><Experience/></RequireAuth>}/>
+        <Route path="/saved" element={<RequireAuth><SavedExperiences/></RequireAuth>}/>
+        <Route path="/inbox" element={<RequireAuth><Inbox/></RequireAuth>}/>
         {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
     </div>

@@ -47,6 +47,7 @@ export function register(config) {
       } else {
         // Is not localhost. Just register service worker
         registerValidSW(swUrl, config);
+        forceServiceWorkerUpdate()
       }
     });
   }
@@ -133,5 +134,17 @@ export function unregister() {
       .catch((error) => {
         console.error(error.message);
       });
+  }
+}
+
+export function forceServiceWorkerUpdate() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      for (let registration of registrations) {
+        // registration.update();  does not work!
+        registration.unregister();
+      }
+      window.location.reload(true);
+    });
   }
 }

@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import { getExperienceById, getExperiences, getExperiencesQuery } from '../lib/storage';
 import { trackPromise } from 'react-promise-tracker';
 import LoadingIndicator from '../components/LoadingIndicator';
+import MainPageStructure from '../components/MainPageStructure';
 
 function Experiences() {
 
@@ -29,9 +30,7 @@ function Experiences() {
 
 
   return (
-      <div className='w-full h-full'>
-          <div className='max-w-[1080px] h-full ml-auto mr-auto bottom-0 space-y-6 sm:px-2 sm:py-2'>
-          <Header/>
+      <MainPageStructure>
           <LoadingIndicator/>
           <div className='w-full h-fit p-16 flex flex-wrap justify-center'>
             {experiences.map(item => (
@@ -48,8 +47,7 @@ function Experiences() {
                 </div>
             ))}
           </div>
-        </div>
-      </div>
+      </MainPageStructure>
       
   );
 }

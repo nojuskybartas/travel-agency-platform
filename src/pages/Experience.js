@@ -15,6 +15,7 @@ import { countryArray, countryObject } from '../lib/nationalities';
 import { getExperienceById, getExperienceOwner, getUserDetails, getUserFinancials, setExperienceViewed } from '../lib/storage';
 import LoadingIndicator from '../components/LoadingIndicator'
 import EditExperience from '../components/EditExperience';
+import MainPageStructure from '../components/MainPageStructure';
 
 function Experience() {
 
@@ -62,10 +63,8 @@ function Experience() {
     
 
     return (
-        <div className='w-full h-full'>
-            <div className="max-w-[1080px] h-full ml-auto mr-auto sm:px-2 sm:py-2 flex flex-col justify-between items-center">
-                <Header/>
-                {experience ? <>
+        <MainPageStructure>
+            {experience ? <>
                 <LoadingIndicator/>
                 <EditExperience show={showEditor} setShow={setShowEditor} experience={experience}/>
                 <div className='w-full h-full flex flex-col justify-around'>
@@ -117,10 +116,7 @@ function Experience() {
                     <h1>Uh oh! 😟</h1>
                     <h2>This experience doesn't exist</h2>
                 </div>}
-
-            </div>
-            <Footer/>
-        </div>
+        </MainPageStructure>
     );
 }
 

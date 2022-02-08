@@ -211,3 +211,16 @@ export const getSearchResults = (input) => {
     const q = query(experiencesRef, where('location', '==', input));
     return q
 }
+
+export const updateStatisticsUserVote = (score) => {
+    const increase = increment(1);
+    const statsPredeploy = doc(db, 'statistics/predeploy')
+    const updateDataWith = score > 0 ? {userVotePlus: increase, voteCount: increase} : {userVoteMinus: increase, voteCount: increase}
+    updateDoc(statsPredeploy, updateDataWith)
+}
+
+export const setIntroViewed = () => {
+    updateDoc(doc(db, 'statistics/predeploy'), {
+        viewCount: increment(1)
+    })
+}
