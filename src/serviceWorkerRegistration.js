@@ -144,7 +144,7 @@ export function forceServiceWorkerUpdate() {
         // registration.update();  does not work!
         registration.unregister();
       }
-      window.location.reload(true);
+      // window.location.reload(true); <- FUCK THIS PIECE OF CODE, HAD ME STUCK FOR 10 FUCKING DAYS!!!
     });
   }
 }

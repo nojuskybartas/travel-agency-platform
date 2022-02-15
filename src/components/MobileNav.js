@@ -11,11 +11,10 @@ import { loginState } from '../atoms/navbarAtom';
 function MobileNav() {
 
     const location = useLocation()
-    const [showLogin, setShowLogin] = useRecoilState(loginState)
 
     return (
         <footer className='flex md:hidden sticky bottom-0 h-14 w-full bg-white justify-around p-2 rounded-t-md z-20'>
-            <NavBarItem label='Explore' linkTo='/'>
+            <NavBarItem label='Explore' linkTo='/home'>
                 <SearchIcon className='w-12 h-12'/>
             </NavBarItem>
             <NavBarItem label='Saved' linkTo='/saved'>
@@ -45,13 +44,13 @@ function MobileNav() {
 
 export default MobileNav;
 
-function NavBarItem({label, linkTo, onClick, ...props}) {
+function NavBarItem({label, linkTo, ...props}) {
 
     const location = useLocation()
 
     return (
         <Link to={linkTo || location}>
-            <div className={`flex flex-col justify-center items-center w-full h-full ${location.pathname === linkTo && 'text-primary'}`} onClick={() => {if (onClick) {onClick()} }}>
+            <div className={`flex flex-col justify-center items-center w-full h-full ${location.pathname === linkTo && 'text-primary'}`}>
                 {props.children}
                 <p className='text-xs'>{label}</p>
             </div>

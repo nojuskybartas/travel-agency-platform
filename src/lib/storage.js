@@ -116,11 +116,22 @@ export const refreshUserData = async() => {
     if (!auth.currentUser) return null
     const details = await getCurrentUserDetails()
     const financials = await getCurrentUserFinancials()
+    const messageChannels = await getCurrentUserMessageChannels()
+    const userMessageChannels = []
+    messageChannels.forEach((channel) => {
+        const c = channel.data()
+        // const channelData  = await getDoc(doc(db, `messageChannels/${c.id}`))
+        // console.log(channelData.data()?.users)
+        // c.users = channelData.data()?.users || []
+        // console.log(c)
+        userMessageChannels.push(c)
+    })
 
     const data = details.data()
     return {
         ...data,
-        financials: financials.data()
+        financials: financials.data(),
+        messageChannels: userMessageChannels
     }
   }
 
@@ -134,6 +145,11 @@ export const getCurrentUserFinancials = async() => {
     return data
 }
 
+export const getCurrentUserMessageChannels = async() => {
+    const data = await getUserMessageChannels(auth.currentUser.uid)
+    return data
+}
+
 export const getUserDetails = async(uid) => {
     const userRef = doc(db, `users/${uid}/account/details`)
     const data = await getDoc(userRef)
@@ -143,6 +159,15 @@ export const getUserDetails = async(uid) => {
 export const getUserFinancials = async(uid) => {
     const userRef = doc(db, `users/${uid}/account/financials`)
     const data = await getDoc(userRef)
+    return data
+}
+
+export const getUserMessageChannels = async(uid) => {
+    const messageChnRef = collection(db, `users/${uid}/messageChannels`)
+    const data = await getDocs(messageChnRef)
+    data.forEach(c => {
+        console.log(c.id)
+    })
     return data
 }
 
@@ -183,7 +208,11 @@ export const getUserExperiences = async(uid) => {
 export const getExperienceOwner = async(ownerRef) => {
     const user = await getDoc(ownerRef)
     const details = await getUserDetails(user.id)
-    return details.data()
+    const data = details.data()
+    return {
+        ...data,
+        id: user.id
+    }
 }
 
 export const setExperienceViewed = async(id) => {

@@ -1,5 +1,6 @@
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { userState } from '../../atoms/userAtom';
 import { auth } from '../../lib/firebase';
@@ -13,6 +14,7 @@ function EmailRegister({handleLoginShow}) {
     const [password, setPassword] = useState('');
 
     const [userData, setUserData] = useRecoilState(userState)
+    const navigate = useNavigate()
 
     const register = e => {
         e.preventDefault()
@@ -25,6 +27,7 @@ function EmailRegister({handleLoginShow}) {
                     refreshUserData().then(res => {
                         setUserData(res)
                         handleLoginShow()
+                        navigate('/home')
                     })
                 })
 

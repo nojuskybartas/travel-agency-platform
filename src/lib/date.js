@@ -22,23 +22,23 @@ export function timeSince(date) {
     var interval = seconds / 31536000;
   
     if (interval > 1) {
-      return Math.floor(interval) + " years";
+      return Math.floor(interval) + " yr";
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-      return Math.floor(interval) + " months";
+      return Math.floor(interval) + " mon";
     }
     interval = seconds / 86400;
     if (interval > 1) {
-      return Math.floor(interval) + " days";
+      return Math.floor(interval) + " d";
     }
     interval = seconds / 3600;
     if (interval > 1) {
-      return Math.floor(interval) + " hours";
+      return Math.floor(interval) + " h";
     }
     interval = seconds / 60;
     if (interval > 1) {
-      return Math.floor(interval) + " minutes";
+      return Math.floor(interval) + " min";
     }
-    return Math.floor(seconds) + " seconds";
+    return Math.floor(seconds) + " s";
   }

@@ -13,7 +13,7 @@ const RequireAuth = ({ children }) => {
 
     
 
-    return user ? children : <Navigate to="/welcome" />
+    return user ? children : <Navigate to="/" />
 
 
     // if (!user) {

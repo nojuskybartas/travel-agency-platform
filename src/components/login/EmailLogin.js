@@ -16,7 +16,7 @@ function EmailLogin({handleLoginShow, setParentState}) {
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             if (userCredential) {
-                navigate('/')
+                navigate('/home')
                 handleLoginShow()
             }
         })
@@ -41,7 +41,7 @@ function EmailLogin({handleLoginShow, setParentState}) {
                 <div className='bg-gray-200 w-full h-1'></div>
             </div>
             
-            <button disabled className='underline font-semibold' onClick={() => setParentState('registerEmail')}>Create account</button>
+            <button className='underline font-semibold' onClick={() => setParentState('registerEmail')}>Create account</button>
         </div>
     )
 }

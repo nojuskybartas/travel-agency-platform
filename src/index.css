@@ -121,7 +121,7 @@ input[type="number"] {
     @apply transition-all ease-in-out duration-700;
   }
 
-  .test-outline {
+  /* .test-outline {
     @apply outline-2 outline-red-400 outline-dashed;
-  }
+  } */
 }

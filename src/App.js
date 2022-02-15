@@ -1,11 +1,12 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { cloneDeep } from "lodash";
 import { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { conversionRateAtom } from "./atoms/currencyAtom";
 import { userState } from "./atoms/userAtom";
-import RequireAuth from "./components/RequireAuth";
+import InboxChannel from "./components/InboxChannel";
+import PrivateRoute from "./components/PrivateRoute";
 import { getConversionRatesEUR } from "./lib/currency";
 import { auth } from "./lib/firebase";
 import { getCurrentUserDetails, getCurrentUserFinancials, getUserDetails, getUserFinancials, refreshUserData, setDefaultUserDetailsOnRegister } from "./lib/storage";
@@ -16,7 +17,6 @@ import Experiences from "./pages/Experiences";
 import Home from "./pages/Home";
 import Inbox from "./pages/Inbox";
 import Intro from "./pages/Intro";
-import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import RegisterCreator from "./pages/RegisterCreator";
 import SavedExperiences from "./pages/SavedExperiences";
@@ -24,8 +24,9 @@ import SavedExperiences from "./pages/SavedExperiences";
 
 function App() {
 
-  const [userData, setUserData] = useRecoilState(userState)
+  // const [userData, setUserData] = useRecoilState(userState)
   const [conversionRates, setConversionRates] = useRecoilState(conversionRateAtom)
+  const navigate = useNavigate()
 
   useEffect(() => {
 
@@ -33,81 +34,42 @@ function App() {
       setConversionRates(res)
     })
 
-    onAuthStateChanged(auth, authUser => {
-      if (authUser) {
-        // const user = auth.currentUser
+    // const unregisterAuthObserver = onAuthStateChanged(auth, authUser => {
+    //   if (authUser) {
 
-        const user = cloneDeep(authUser)
+    //     refreshUserData().then(data => {
+    //       setUserData(data)
+    //     })
 
-        console.log(authUser.uid)
+    //   } else {
+    //     setUserData(null)
+    //     // navigate('/')
+    //   }
+    // })
 
-        // TODO: FOR DEV ONLY, REMOVE WHEN DEPLOY
-        // setDefaultUserDetailsOnRegister(user.uid)
-
-        // refreshUserData()
-
-        refreshUserData().then(data => {
-          setUserData(data)
-        })
-
-        // getUserDetails(authUser.uid).then(res => {
-        //   let data = res.data()
-        //   getUserFinancials(authUser.uid).then(res => {
-        //     data = {
-        //       ...data,
-        //       financials: res.data()
-        //     }
-        //     setUserData(data)
-        //   })
-         
-        // })
-
-        // getUserFinancials(auth.currentUser.uid).then(res => {
-        //   setUserData(data => ({
-        //     ...data,
-        //     financials: res.data()
-        //   }))
-        // })
-        // // getUserDetails(auth.currentUser.uid).then(res => {
-        // //   setUserData(data => ({
-        // //     ...data,
-        // //     details: res.data()
-        // //   }))
-        // // })
-
-        
-        // console.log(user)
-        // console.log(userData)
-        // setUser(user)
-        // console.log(userData)
-      } else {
-        console.log('logged out')
-        setUserData(null)
-      }
-    })
+    // return () => unregisterAuthObserver()
   }, [])
 
-  useEffect(() => {
-    console.log(userData)
-  }, [userData])
+  // useEffect(() => {
+  //   console.log(userData)
+  // }, [userData])
 
 
   return (
-    <div className="">
       <Routes>
-        <Route path="/welcome" element={<Intro/>}/>
-        <Route path='/' element={<RequireAuth><Home/></RequireAuth>}/>
-        <Route path="/login" element={<RequireAuth><Login/></RequireAuth>}/>
-        <Route path='/profile' element={<RequireAuth><Profile/></RequireAuth>}/>
-        <Route path="/create" element={<RequireAuth><CreateExperience/></RequireAuth>}/>
-        <Route path="/creator/register" element={<RequireAuth><RegisterCreator/></RequireAuth>}/>
-        <Route path="/experiences" element={<RequireAuth><Experiences/></RequireAuth>}/>
-        <Route path="/experience/:experienceId" element={<RequireAuth><Experience/></RequireAuth>}/>
-        <Route path="/saved" element={<RequireAuth><SavedExperiences/></RequireAuth>}/>
-        <Route path="/inbox" element={<RequireAuth><Inbox/></RequireAuth>}/>
+        <Route path="/" element={<Intro/>}/>
+        <Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>}/>
+        {/* <Route path="/login" element={<PrivateRoute><Login/></PrivateRoute>}/> */}
+        <Route path='/profile' element={<PrivateRoute><Profile/></PrivateRoute>}/>
+        <Route path="/create" element={<PrivateRoute><CreateExperience/></PrivateRoute>}/>
+        <Route path="/creator/register" element={<PrivateRoute><RegisterCreator/></PrivateRoute>}/>
+        <Route path="/experiences" element={<PrivateRoute><Experiences/></PrivateRoute>}/>
+        <Route path="/experience/:experienceId" element={<PrivateRoute><Experience/></PrivateRoute>}/>
+        <Route path="/saved" element={<PrivateRoute><SavedExperiences/></PrivateRoute>}/>
+        <Route path="/inbox" element={<PrivateRoute><Inbox/></PrivateRoute>}/>
+        <Route path="/inbox/:inboxId" element={<PrivateRoute><InboxChannel/></PrivateRoute>}/>
         {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
-    </div>
   );
 }
 

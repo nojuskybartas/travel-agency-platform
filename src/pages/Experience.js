@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { trackPromise } from 'react-promise-tracker';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { conversionRateAtom } from '../atoms/currencyAtom';
 import { userState } from '../atoms/userAtom';
@@ -10,12 +10,14 @@ import Header from '../components/Header';
 import ReviewSection from '../components/ReviewSection';
 import { getFormatedPrice } from '../lib/currency';
 import { getAgeInYears, getExperienceAge, timeSince } from '../lib/date';
-import { auth } from '../lib/firebase';
+import { auth, db } from '../lib/firebase';
 import { countryArray, countryObject } from '../lib/nationalities';
 import { getExperienceById, getExperienceOwner, getUserDetails, getUserFinancials, setExperienceViewed } from '../lib/storage';
 import LoadingIndicator from '../components/LoadingIndicator'
 import EditExperience from '../components/EditExperience';
 import MainPageStructure from '../components/MainPageStructure';
+import { ChatAlt2Icon } from '@heroicons/react/outline';
+import { collection, doc, setDoc } from 'firebase/firestore';
 
 function Experience() {
 
@@ -27,6 +29,7 @@ function Experience() {
     const [currencyAdjustedPrice, setCurrencyAdjustedPrice] = useState()
     const [userIsOwner, setUserIsOwner] = useState()
     const [showEditor, setShowEditor] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         setCurrencyAdjustedPrice(experience?.price * currencyRates[currency.toLowerCase()])
@@ -60,6 +63,39 @@ function Experience() {
         
         // console.log()
     }, [experience])
+
+    const channelExists = () => {
+        console.log(userData)
+        for (const channel of userData.messageChannels) {
+            if (channel.user === experience.owner.id) {
+                console.log('channel exists!'); 
+                navigate(`/inbox/${channel.id}`); 
+                return true
+            }
+        }
+        console.log('no channel found')
+        return false
+    }
+
+    const createConversation = () => {
+        if (!auth.currentUser.uid || !experience.owner.id) return
+        if (channelExists()) return
+
+        const inbox = doc(collection(db, `messageChannels`))
+        
+        setDoc(inbox, {
+            users: [auth.currentUser.uid, experience.owner.id]
+        })
+        setDoc(doc(db, `users/${auth.currentUser.uid}/messageChannels/${inbox.id}`), {
+            id: inbox.id,
+            user: experience.owner.id
+        })
+        setDoc(doc(db, `users/${experience.owner.id}/messageChannels/${inbox.id}`), {
+            id: inbox.id,
+            user: auth.currentUser.uid
+        })
+        navigate(`/inbox/${inbox.id}`)
+    }
     
 
     return (
@@ -84,29 +120,36 @@ function Experience() {
                                 <p>Posted {timeSince(experience?.createdOn)} ago</p>
                             </div>
                         </div>
-                        {experience?.owner && <div className='grow h-fit space-y-2 mb-12 flex flex-col items-center md:items-end flip-card'>
-                            <div className='flip-card-inner'>
-                                <div className='flip-card-front flex flex-col justify-center items-center'>
-                                    <h1 className='font-bold text-2xl'>Meet the Host 🪅</h1>
-                                    <img className='w-48 h-48 object-cover bg-black rounded-2xl p-2' src={experience?.owner.picture}/>
-                                    <div className='flex text-2xl'>
-                                        <h1 className=''>{experience?.owner.name}</h1>
-                                        <h1 className='font-semibold'>{experience?.owner.showAge && ', ' + getAgeInYears(experience?.owner.dateOfBirth)}</h1>
-                                    </div>
-                                    <h1>{experience?.owner.profession}</h1>
-                                    <h1>{countryObject[experience?.owner.nationality]}</h1>
-                                </div>
-                                <div className='flip-card-back flex justify-center items-center'>
-                                    <h1>{experience?.owner.motivation}</h1>
-                                </div>
+                        {experience?.owner && 
+                            <div className='flex flex-col grow h-fit items-center justify-center'>
+                            <div className='h-fit min-h-[5rem] w-fit -translate-x-10'>
+                                <h1 className='font-bold text-2xl'>Meet the Host 🪅</h1>
+                                {!userIsOwner && <ChatAlt2Icon className='w-8 h-8 hover:scale-110' onClick={createConversation}/>}
                             </div>
                             
+                            <div className='grow h-fit space-y-2 mb-12 flex flex-col items-center md:items-end flip-card'>
+                                <div className='flip-card-inner h-fit'>
+                                    <div className='flip-card-front flex flex-col justify-center items-center'>
+                                        <img className='w-48 h-48 object-cover bg-black rounded-2xl p-2' src={experience?.owner.picture}/>
+                                        <div className='flex text-2xl'>
+                                            <h1 className=''>{experience?.owner.name}</h1>
+                                            <h1 className='font-semibold'>{experience?.owner.showAge && ', ' + getAgeInYears(experience?.owner.dateOfBirth)}</h1>
+                                        </div>
+                                        <h1>{experience?.owner.profession}</h1>
+                                        <h1>{countryObject[experience?.owner.nationality]}</h1>
+                                    </div>
+                                    <div className='flip-card-back flex justify-center items-center'>
+                                        <h1>{experience?.owner.motivation}</h1>
+                                    </div>
+                                </div>
+                            
+                            </div>
                         </div>}
                     </div>
                 </div>
                 <Carousel label='Here, take a look! 😎' items={experience?.images?.map((url, i) => {
                     return <Image url={url} key={i}/>
-                })}/>
+                }) || []}/>
 
                 <ReviewSection experienceId={experienceId}/>
                 

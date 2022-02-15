@@ -16,9 +16,11 @@ import { getImagesFromStorageUrl, refreshUserData } from '../lib/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import ReactModal from 'react-modal';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/outline';
+import { useAuth } from '../hooks/useAuth';
 
 function EditUser({show, setShow}) {
 
+    // const { auth } = useAuth()
     const [userDetails, setUserDetails] = useRecoilState(userState)
 
     const handleLoginShow = () => {
@@ -43,15 +45,15 @@ function EditUser({show, setShow}) {
         {/* <CheckCircleIcon className='absolute bottom-2 right-2 rounded-full w-12 h-12 '/> */}
         <Formik
             initialValues={{ 
-                    dateOfBirth: userDetails.dateOfBirth,
-                    showAge: userDetails.showAge,
-                    address: userDetails.address,
-                    nationality: userDetails.nationality,
-                    profession: userDetails.profession,
+                    dateOfBirth: userDetails?.dateOfBirth,
+                    showAge: userDetails?.showAge,
+                    address: userDetails?.address,
+                    nationality: userDetails?.nationality,
+                    profession: userDetails?.profession,
                     currency: userDetails?.financials.currency,
-                    motivation: userDetails.motivation,
+                    motivation: userDetails?.motivation,
                     picture: null,
-                    name: userDetails.name
+                    name: userDetails?.name
             }}
             
 
