@@ -5,7 +5,7 @@ import { userState } from '../atoms/userAtom'
 import { auth } from '../lib/firebase'
 import { refreshUserData } from '../lib/storage'
 
-export function useAuth() {
+export default function useAuth() {
   const [userData, setUserData] = useRecoilState(userState)
   const [authState, setAuthState] = useState({
     isSignedIn: false,

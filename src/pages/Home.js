@@ -51,15 +51,17 @@ function Home () {
 
     return (
         <MainPageStructure>
-            <SearchWBG/>
-            <div className='w-full h-fit test-outline'>
-                <Carousel label='Explore Latest Experiences' infinite items={latestExperienceCards}/>
-                <LoadingIndicator/>
-            </div>
-            <div className='w-full h-fit test-outline'>
-                <Carousel label='Dream your next trip' infinite items={countryCards}/>
-                <LoadingIndicator/>
-            </div>
+            {/* <div className="h-full overflow-y-scroll"> */}
+                <SearchWBG/>
+                <div className='w-full h-fit test-outline'>
+                    <Carousel label='Explore Latest Experiences' infinite items={latestExperienceCards}/>
+                    <LoadingIndicator/>
+                </div>
+                <div className='w-full h-fit test-outline'>
+                    <Carousel label='Dream your next trip' infinite items={countryCards}/>
+                    <LoadingIndicator/>
+                </div>
+            {/* </div> */}
         </MainPageStructure>
     )
 }

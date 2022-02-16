@@ -94,6 +94,19 @@ input[type="number"] {
   clip-path: circle(40px);
 }
 
+.notification-clip {
+  /* -webkit-mask-image: radial-gradient(
+    circle 8px at calc(85%) calc(85%),
+    red 7px,
+    red 1
+  ); */
+  -webkit-mask-image: radial-gradient(
+    circle 8px at calc(85%) calc(85%),
+    yellow 6px,
+    purple 1
+  );
+}
+
 @layer components {
   .headerRight {
     @apply flex text-center cursor-pointer h-9 w-fit p-3 ml-2 whitespace-nowrap items-center rounded-3xl hover:bg-gray-300;
