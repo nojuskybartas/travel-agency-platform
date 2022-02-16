@@ -16,8 +16,9 @@ import { getExperienceById, getExperienceOwner, getUserDetails, getUserFinancial
 import LoadingIndicator from '../components/LoadingIndicator'
 import EditExperience from '../components/EditExperience';
 import MainPageStructure from '../components/MainPageStructure';
-import { ChatAlt2Icon } from '@heroicons/react/outline';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { ChatAlt2Icon, HeartIcon } from '@heroicons/react/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/solid'
+import { collection, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 
 function Experience() {
 
@@ -29,6 +30,7 @@ function Experience() {
     const [currencyAdjustedPrice, setCurrencyAdjustedPrice] = useState()
     const [userIsOwner, setUserIsOwner] = useState()
     const [showEditor, setShowEditor] = useState(false)
+    const [savedByUser, setSavedByUser] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -61,8 +63,13 @@ function Experience() {
         // console.log(experienceOwner)
         // console.log(experience)
         
-        // console.log()
-    }, [experience])
+        if(userData?.savedExperiences?.some(exp => exp.id === experienceId)) {
+            setSavedByUser(true)
+        } else {
+            setSavedByUser(false)
+        }
+
+    }, [userData])
 
     const channelExists = () => {
         console.log(userData)
@@ -96,17 +103,42 @@ function Experience() {
         })
         navigate(`/inbox/${inbox.id}`)
     }
+
+    const saveExperience = () => {
+        if (!auth.currentUser.uid || !experience.owner.id) return
+        setSavedByUser(!savedByUser)
+        const savedExpRef = collection(db, `users/${auth.currentUser.uid}/savedExperiences`)
+        if (!savedByUser) {
+            setDoc(doc(savedExpRef), {
+                id: experienceId
+            })
+        } else {
+            const expQuery = query(savedExpRef, where('id', '==', experienceId))
+            getDocs(expQuery).then(snapshot => {
+                snapshot.forEach(e => {
+                    console.log(e.ref)
+                    deleteDoc(e.ref)
+                })
+            })
+        }
+    }
     
 
     return (
-        <MainPageStructure>
+        <MainPageStructure hideFooter>
             {experience ? <>
                 <LoadingIndicator/>
                 <EditExperience show={showEditor} setShow={setShowEditor} experience={experience}/>
                 <div className='w-full h-full flex flex-col justify-around'>
-                    <div className='w-full h-fit flex space-x-8 font-bold text-3xl py-14 items-center'>
+                    <div className='w-full h-fit flex space-x-8 font-bold text-3xl items-center'>
                         <h1 className='break-words'>{experience?.title}</h1>
-                        {userIsOwner && <h3 className='underline italic text-2xl hover:scale-110 cursor-pointer transition-all ease-out' onClick={() => setShowEditor(true)}>Edit</h3>}
+                        {userIsOwner ? 
+                            <h3 className='underline italic text-2xl hover:scale-110 cursor-pointer transition-all ease-out' onClick={() => setShowEditor(true)}>Edit</h3> 
+                        : 
+                            <div className='cursor-pointer' onClick={saveExperience}>
+                                {savedByUser ? <HeartIconSolid className='w-8 h-8 hover:scale-110'/> : <HeartIcon className='w-8 h-8 hover:scale-110'/>}
+                            </div>
+                        }
                     </div>
                     <div className='flex flex-wrap-reverse justify-between'>
                         <div className='w-full md:w-2/3'>
@@ -174,8 +206,8 @@ function Image({url}) {
     }, [loaded])
 
     return(
-        <div className='bg-gray-900 p-2 group h-fit w-[350px] md:w-[450px]'>
-            <img src={url} className={`w-full h-[350px] md:h-fit max-h-[350px] object-contain group-hover:opacity-75 `} onLoad={() => setLoaded(true)}/>
+        <div className='bg-gray-900 p-2 group h-96 w-[350px] md:w-[450px] flex items-center'>
+            <img src={url} className={`w-full h-80 md:h-fit max-h-96 object-contain group-hover:opacity-75 `} onLoad={() => setLoaded(true)}/>
         </div>
     )
 }

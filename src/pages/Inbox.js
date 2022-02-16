@@ -15,7 +15,6 @@ import { getUserDetails } from '../lib/storage';
 
 function Inbox() {
 
-    const [expandedChannel, setExpandedChannel] = useState()
     const userDetails = useRecoilValue(userState)
     const navigate = useNavigate()
 
@@ -33,16 +32,7 @@ function Inbox() {
                 <div>
                     <p>You don't have any messages</p>
                 </div>}
-            </div>
-            
-                {/* {!expandedChannel ? 
-                    
-                :
-                    <InboxChannel id={expandedChannel} onExit={() => {setExpandedChannel(null)}}/>
-                } */}
-            
-            
-            
+            </div>          
         </MainPageStructure>
     );
 }

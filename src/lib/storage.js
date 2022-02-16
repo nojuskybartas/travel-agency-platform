@@ -117,6 +117,8 @@ export const refreshUserData = async() => {
     const details = await getCurrentUserDetails()
     const financials = await getCurrentUserFinancials()
     const messageChannels = await getCurrentUserMessageChannels()
+    const savedExperiences = await getCurrentUserSavedExperiences()
+
     const userMessageChannels = []
     messageChannels.forEach((channel) => {
         const c = channel.data()
@@ -126,12 +128,20 @@ export const refreshUserData = async() => {
         // console.log(c)
         userMessageChannels.push(c)
     })
+    
+    const userSavedExperiences = []
+    savedExperiences.forEach((experience) => {
+        const e = experience.data()
+        userSavedExperiences.push(e)
+    })
+
 
     const data = details.data()
     return {
         ...data,
         financials: financials.data(),
-        messageChannels: userMessageChannels
+        messageChannels: userMessageChannels,
+        savedExperiences: userSavedExperiences
     }
   }
 
@@ -150,6 +160,11 @@ export const getCurrentUserMessageChannels = async() => {
     return data
 }
 
+export const getCurrentUserSavedExperiences = async() => {
+    const data = await getUserSavedExperiences(auth.currentUser.uid)
+    return data
+}
+
 export const getUserDetails = async(uid) => {
     const userRef = doc(db, `users/${uid}/account/details`)
     const data = await getDoc(userRef)
@@ -165,9 +180,12 @@ export const getUserFinancials = async(uid) => {
 export const getUserMessageChannels = async(uid) => {
     const messageChnRef = collection(db, `users/${uid}/messageChannels`)
     const data = await getDocs(messageChnRef)
-    data.forEach(c => {
-        console.log(c.id)
-    })
+    return data
+}
+
+export const getUserSavedExperiences = async(uid) => {
+    const savedExpRef = collection(db, `users/${uid}/savedExperiences`)
+    const data = await getDocs(savedExpRef)
     return data
 }
 
