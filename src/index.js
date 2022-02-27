@@ -11,7 +11,9 @@ ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
       <BrowserRouter>
-        <App />
+        <div className='overscroll-none'>
+          <App />
+        </div>
       </BrowserRouter>
     </RecoilRoot>
   </React.StrictMode>,

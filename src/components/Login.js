@@ -61,12 +61,16 @@ function Submenu() {
             <span>My Profile</span>
         </li>
       </Link>
-      {userDetails?.type === 'regular' && 
-      <Link to='/creator/register'>
+      <Link to='/inbox'>
         <li className="hover:bg-gray-600">
-          <span>Register as Creator</span>
+          <span>Inbox</span>
         </li>
-      </Link>}
+      </Link>
+      <Link to='/saved'>
+        <li className="hover:bg-gray-600">
+          <span>Saved</span>
+        </li>
+      </Link>
       <li className="hover:bg-gray-600" onClick={() => signOut(auth)}>
         <span>Sign Out</span>
       </li>

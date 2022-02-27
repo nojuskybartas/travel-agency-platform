@@ -67,7 +67,7 @@ function App() {
         <Route path="/experience/:experienceId" element={<PrivateRoute><Experience/></PrivateRoute>}/>
         <Route path="/saved" element={<PrivateRoute><SavedExperiences/></PrivateRoute>}/>
         <Route path="/inbox" element={<PrivateRoute><Inbox/></PrivateRoute>}/>
-        <Route path="/inbox/:inboxId" element={<PrivateRoute><InboxChannel/></PrivateRoute>}/>
+        <Route path="/inbox/:inboxId" element={<PrivateRoute><Inbox/></PrivateRoute>}/>
         {/* <Route path="*" element={<NoPage />} /> */}
       </Routes>
   );

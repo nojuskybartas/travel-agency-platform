@@ -13,7 +13,7 @@ function MobileNav() {
     const location = useLocation()
 
     return (
-        <footer className='flex md:hidden sticky bottom-0 h-14 w-full bg-white justify-around p-2 rounded-t-md z-20'>
+        <footer className='flex md:hidden sticky bottom-0 h-14 w-full bg-white justify-around p-2 rounded-t-md z-10'>
             <NavBarItem label='Explore' linkTo='/home'>
                 <SearchIcon className='w-12 h-12'/>
             </NavBarItem>
