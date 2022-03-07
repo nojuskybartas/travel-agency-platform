@@ -32,7 +32,7 @@ function Experiences() {
   return (
       <MainPageStructure>
           <LoadingIndicator/>
-          <div className='w-full h-fit p-16 flex flex-wrap justify-center'>
+          <div className='w-full h-fit min-h-[60vh] p-16 flex flex-wrap justify-center'>
             {experiences.map(item => (
                 // <ExperienceCard description={experience.details.description} price={experience.details.price} image={experience.images[0]} rating_count={0} rating={0}/>
                 <div className='flip-card w-[300px] md:w-[200px] h-[300px] md:h-[200px] cursor-pointer' key={item.id} onClick={() => navigate(`/experience/${item.id}`)}>

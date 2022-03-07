@@ -1,26 +1,22 @@
 import React, { useEffect } from 'react';
-import CreateExperienceForm from '../components/CreateExperienceForm';
+import CreateExperienceForm2 from '../components/CreateExperienceForm2';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { useRecoilValue } from 'recoil';
 import { userState } from '../atoms/userAtom';
 import SignUpCreator from '../components/SignUpCreator';
+import MainPageStructure from '../components/MainPageStructure';
 
 function CreateExperience() {
 
     const userData = useRecoilValue(userState)
 
     return (
-        <div>
-            <div className="max-w-[1080px] h-full ml-auto mr-auto space-y-6 sm:px-2 sm:py-2 flex flex-col justify-between items-center">
-                <Header/>
-                <div className='w-full h-[80vh]'>
-                    {userData?.type !== 'creator' ? <SignUpCreator/> : <CreateExperienceForm/>}
-
-                </div>
+        <MainPageStructure>
+            <div className='w-full h-full md:h-[80vh] md:mb-5'>
+                {userData?.type !== 'creator' ? <SignUpCreator/> : <CreateExperienceForm2/>}
             </div>
-            <Footer/>
-        </div>
+        </MainPageStructure>
     )
 }
 

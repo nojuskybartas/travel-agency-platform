@@ -1,22 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Footer from './Footer';
 import Header from './Header';
 import MobileNav from './MobileNav';
+import { use100vh } from 'react-div-100vh'
 
 function MainPageStructure(props) {
+
+  const height = use100vh()
+
   return (
-    // <div className='w-full h-screen overflow-y-scroll'>
-    <div className="w-full h-full min-h-screen flex flex-col justify-between">
-        <div className="max-w-[1080px] w-full h-full ml-auto mr-auto sm:px-2 test-outline">
-            <Header/>
-            <div className={`w-full h-full`}>
-              {props.children}
-            </div>
+    <div style={{ height: height }} className="w-full max-w-[1080px] ml-auto mr-auto flex flex-col justify-between bg-white">
+      <Header/>
+        <div className={`w-full h-full overflow-y-scroll scrollbar-hide md:px-2`}>
+          {props.children}
+          {!props.hideFooter && <Footer/>}
         </div>
-        {!props.hideFooter && <Footer/>}
-        <MobileNav/>
-    </div>
-    // </div>
+      <MobileNav/>
+    </div> 
   );
 }
 

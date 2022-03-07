@@ -10,10 +10,8 @@ import { loginState } from '../atoms/navbarAtom';
 
 function MobileNav() {
 
-    const location = useLocation()
-
     return (
-        <footer className='flex md:hidden sticky bottom-0 h-14 w-full bg-white justify-around p-2 rounded-t-md z-10'>
+        <footer className='md:hidden sticky bottom-0 h-14 w-full flex justify-around p-2 z-10 border-t border-solid border-primary overflow-hidden bg-white'>
             <NavBarItem label='Explore' linkTo='/home'>
                 <SearchIcon className='w-12 h-12'/>
             </NavBarItem>
@@ -50,7 +48,7 @@ function NavBarItem({label, linkTo, ...props}) {
 
     return (
         <Link to={linkTo || location}>
-            <div className={`flex flex-col justify-center items-center w-full h-full ${location.pathname === linkTo && 'text-primary'}`}>
+            <div className={`flex flex-col justify-center items-center bg-transparent w-full h-full ${location.pathname === linkTo && 'text-primary scale-105'}`}>
                 {props.children}
                 <p className='text-xs'>{label}</p>
             </div>

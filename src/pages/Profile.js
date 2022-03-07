@@ -1,6 +1,6 @@
-import { ChevronRightIcon, CogIcon, FingerPrintIcon, TicketIcon, UserCircleIcon } from "@heroicons/react/outline"
+import { ChevronRightIcon, CogIcon, FingerPrintIcon, PencilIcon, TicketIcon, UserCircleIcon } from "@heroicons/react/outline"
 import { useEffect, useState } from "react"
-import { Navigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { userState } from "../atoms/userAtom"
 import Carousel from "../components/Carousel"
@@ -19,18 +19,19 @@ import { signOut } from "firebase/auth"
 function Profile() {
 
     // const {auth} = useAuth()
+    const navigate = useNavigate()
     const [topExperiences, setTopExperiences] = useState([])
     const [userDetails, setUserDetails] = useRecoilState(userState)
     const [editAccountDetails, setEditAccountDetails] = useState(false)
     const [topExperienceCards, setTopExperienceCards] = useState([])
+    // const [loading, setLoading] = useState(true)
 
     const handleDragStart = (e) => e.preventDefault();  
     
     // useEffect(() => {
-    //     refreshUserData().then(data => {
-    //         setUserDetails(data)
-    //     })
-    // }, [])
+    //     if (!userDetails || !auth.currentUser) return
+    //     setLoading(false)
+    // }, [userDetails, auth])
 
     useEffect(() => {
 
@@ -45,7 +46,7 @@ function Profile() {
             })
         })
         
-    }, [userDetails])
+    }, [auth])
 
     useEffect(() => {
         if (topExperiences.length === 0) return
@@ -72,6 +73,11 @@ function Profile() {
             <h1 className="font-bold text-2xl p-6">Account Details</h1>
             <ProfileItem title='Personal' icon={<CogIcon/>} onClick={() => setEditAccountDetails(true)}/>
             <ProfileItem title='Login' icon={<FingerPrintIcon/>} />
+
+            {userDetails?.type === 'creator' && <>
+            <h1 className="font-bold text-2xl p-6">Creator Panel</h1>
+            <ProfileItem title='Create Experience' icon={<PencilIcon/>} onClick={() => navigate('/create')}/>
+            </>}
 
             <h1 className="font-bold text-2xl p-6">Financials</h1>
             <ProfileItem title='Payments' icon={<TicketIcon/>} />

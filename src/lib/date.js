@@ -40,5 +40,19 @@ export function timeSince(date) {
     if (interval > 1) {
       return Math.floor(interval) + " min";
     }
-    return Math.floor(seconds) + " s";
+    return 'Just now'
+    // Math.floor(seconds) + " s";
+  }
+
+  export function timeInHHMM(date) {
+    const time = new Date(date)
+    let h = time.getHours()
+    let min = time.getMinutes()
+    if (h < 10) {
+      h = '0'+h
+    }
+    if (min < 10) {
+      min = '0'+min
+    }
+    return h + ':' + min
   }

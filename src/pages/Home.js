@@ -57,7 +57,7 @@ function Home () {
                     <Carousel label='Explore Latest Experiences' infinite items={latestExperienceCards}/>
                     <LoadingIndicator/>
                 </div>
-                <div className='w-full h-fit test-outline'>
+                <div className='w-full h-fit test-outline hidden'>
                     <Carousel label='Dream your next trip' infinite items={countryCards}/>
                     <LoadingIndicator/>
                 </div>

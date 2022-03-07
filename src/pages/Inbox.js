@@ -103,6 +103,7 @@ export default Inbox;
 
 function InboxChannelPreview(props) {
 
+    const { inboxId } = useParams();
     const [users, setUsers] = useState([])
     const [lastMessage, setLastMessage] = useState({});
     const [loading, setLoading] = useState(true)
@@ -154,9 +155,11 @@ function InboxChannelPreview(props) {
         if (!user?.uid || !lastMessage?.author || loading) return
         if ((user.uid !== lastMessage.author) && !lastMessage.seenOn) {
             setShowNotification(true)
+        } else {
+            setShowNotification(false)
         }
 
-    }, [lastMessage, loading, selected])
+    }, [lastMessage, loading, selected, inboxId])
 
     useEffect(() => {
         if (!user?.uid || !lastMessage?.author || loading) return
@@ -188,18 +191,18 @@ function InboxChannelPreview(props) {
     }
 
     return (
-        <div className={`absolute w-full h-16 ${selected ? 'bg-gray-300' : 'bg-gray-200'} flex items-center p-2 mt-3 space-x-2 rounded-md ${loading && 'hidden'} transition-long`} onClick={props.onClick} style={{transform: `translateY(${position*4.5}rem)`}}>
+        <div className={`absolute w-full h-16 ${selected ? 'bg-gray-400' : 'bg-gray-300'} flex items-center p-2 mt-3 space-x-2 rounded-md ${loading && 'hidden'} transition-long`} onClick={props.onClick} style={{transform: `translateY(${position*4.5}rem)`}}>
             <img className={`w-11 h-10 object-cover rounded-full`} src={users?.picture} onLoad={() => setLoading(false)}/>
             <div className='w-full flex flex-col -space-y-1 max-w-[80%]'>
                 <div className='flex items-center space-x-2'>
                     <p>{users?.name}</p>
                     {showNotification && <BellIcon className='w-5 h-5 text-red-500'/>}
                 </div>
-                <div className='flex text-sm text-gray-600 space-x-3'>
+                {lastMessage.text && <div className='flex text-sm text-gray-600 space-x-3'>
                     <p className=' truncate'>{lastMessage.text}</p>
                     <p>•</p>
                     <p className='whitespace-nowrap'>{timeFromMessage}</p>
-                </div>
+                </div>}
             </div>
             
         </div>    

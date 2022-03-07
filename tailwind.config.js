@@ -9,7 +9,16 @@ module.exports = {
       },
       colors: {
         primary: '#A393EB',
-        secondary: '#875870',
+        secondary: '#9DBF9E',
+        footer: '#CC978E',
+        form: {
+          navbar: '#274029',
+          navbarBorder: '#97A097',
+          navbarBorderActive: '#ACD1AD',
+          navbarText: '#DEF0DF',
+          form: '#9DBF9E',
+          formText: '#FFFFFF',
+        }
       }
     },
   },

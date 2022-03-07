@@ -15,7 +15,7 @@ function Header ({transparent}) {
     
 
     return (
-        <div className={`sticky top-0 z-10 w-full h-14 flex justify-center md:justify-between items-center rounded-b-md test-outline p-2 ${!transparent && 'bg-white'}`}>
+        <div className={`sticky top-0 z-10 w-full h-14 flex justify-center md:justify-between items-center rounded-b-md p-2 overflow-hidden ${!transparent && 'bg-white'}`}>
             {/* <NavBar /> */}
 
             <Link to='/home'>
