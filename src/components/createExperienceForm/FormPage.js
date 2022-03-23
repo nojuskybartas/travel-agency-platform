@@ -5,7 +5,8 @@ function FormPage(props) {
   return (
     <AnimatePresence exitBeforeEnter>
       <motion.div 
-      className='w-full h-full p-16 mb:p-20 text-form-formText' 
+      key={props.title}
+      className='w-full h-full p-4 md:px-0 md:py-8 text-form-formText' 
       initial={{ x: -100}}
       animate={{ x: 0 }}
       exit={{ x: -100 }}

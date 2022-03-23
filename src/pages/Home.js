@@ -50,7 +50,7 @@ function Home () {
     ];
 
     return (
-        <MainPageStructure>
+        <MainPageStructure key='Home page'>
             {/* <div className="h-full overflow-y-scroll"> */}
                 <SearchWBG/>
                 <div className='w-full h-fit test-outline'>

@@ -6,13 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
+import LoginModal from './components/LoginModal';
 
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
       <BrowserRouter>
-        <div className='overscroll-none bg-white'>
+        <div className='overscroll-none bg-background'>
           <App />
+          <LoginModal label='Hello! :)'/>
         </div>
       </BrowserRouter>
     </RecoilRoot>

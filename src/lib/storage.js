@@ -259,15 +259,21 @@ export const getSearchResults = (input) => {
     return q
 }
 
-export const updateStatisticsUserVote = (score) => {
-    const increase = increment(1);
-    const statsPredeploy = doc(db, 'statistics/predeploy')
-    const updateDataWith = score > 0 ? {userVotePlus: increase, voteCount: increase} : {userVoteMinus: increase, voteCount: increase}
-    updateDoc(statsPredeploy, updateDataWith)
+export const updateStatisticsUserVote = () => {
+    updateDoc(doc(db, 'statistics/predeploy'), {
+        voteCount: increment(1)
+    })
 }
 
 export const setIntroViewed = () => {
     updateDoc(doc(db, 'statistics/predeploy'), {
         viewCount: increment(1)
+    })
+}
+
+export const registerUserToEmailList = (email) => {
+    setDoc(doc(collection(db, 'emailList')), {
+        email: email,
+        submitTime: new Date().valueOf()
     })
 }

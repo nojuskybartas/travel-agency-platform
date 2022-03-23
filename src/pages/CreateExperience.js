@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import CreateExperienceForm2 from '../components/CreateExperienceForm2';
+import CreateExperienceForm3 from '../components/CreateExperienceForm3';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { useRecoilValue } from 'recoil';
@@ -14,7 +14,7 @@ function CreateExperience() {
     return (
         <MainPageStructure>
             <div className='w-full h-full md:h-[80vh] md:mb-5'>
-                {userData?.type !== 'creator' ? <SignUpCreator/> : <CreateExperienceForm2/>}
+                {userData?.type !== 'creator' ? <SignUpCreator/> : <CreateExperienceForm3/>}
             </div>
         </MainPageStructure>
     )

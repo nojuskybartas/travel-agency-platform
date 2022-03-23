@@ -3,20 +3,30 @@ import Footer from './Footer';
 import Header from './Header';
 import MobileNav from './MobileNav';
 import { use100vh } from 'react-div-100vh'
+import { motion, AnimatePresence } from 'framer-motion';
 
 function MainPageStructure(props) {
 
-  const height = use100vh()
+  // const height = use100vh()
 
   return (
-    <div style={{ height: height }} className="w-full max-w-[1080px] ml-auto mr-auto flex flex-col justify-between bg-white">
+    
+    <div className="w-full h-screen max-w-[1080px] ml-auto mr-auto flex flex-col justify-between overflow-y-hidden overflow-x-hidden">
       <Header/>
-        <div className={`w-full h-full overflow-y-scroll scrollbar-hide md:px-2`}>
+      <AnimatePresence exitBeforeEnter >
+        <motion.div 
+        key={props.key}
+        initial={{ x: '-100%' }}
+        animate={{ x: '0%' }}
+        exit={{ x: '100%' }}
+        className={`w-full h-full overflow-y-scroll scrollbar-hide md:px-2`}>
           {props.children}
           {!props.hideFooter && <Footer/>}
-        </div>
+        </motion.div>
+      </AnimatePresence>
       <MobileNav/>
     </div> 
+    
   );
 }
 

@@ -31,6 +31,20 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+::-webkit-scrollbar {
+  width: 12px;
+  background-color: theme("colors.background");
+}
+
+/* ::-webkit-scrollbar-track {
+  background-color: theme("colors.background");
+} */
+
+::-webkit-scrollbar-thumb {
+  border-radius: 12px;
+  background: theme("colors.secondary");
+}
+
 .searchBar_shadow {
   box-shadow: 5px 5px 5px rgb(59, 48, 48);
 }
@@ -93,6 +107,10 @@ input[type="number"] {
   color: white;
   transform: rotateY(180deg);
 }
+
+/* .glow {
+  filter: drop-shadow(3px 5px 2px #2f402d);
+} */
 
 .clipCircle {
   clip-path: circle(40px);
@@ -179,6 +197,10 @@ input[type="number"] {
 
   .transition-long {
     @apply transition-all ease-in-out duration-700;
+  }
+
+  .glow {
+    @apply drop-shadow-[1.2px_2.5px_2px_theme('colors.shadow')] lg:drop-shadow-[3px_5px_2px_theme('colors.shadow')];
   }
 
   /* .test-outline {

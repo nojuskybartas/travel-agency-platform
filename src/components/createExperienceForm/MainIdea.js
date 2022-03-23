@@ -6,7 +6,7 @@ function MainIdea({values, setValues, handleChange}) {
 
     
     return (
-        <FormPage title='Lets get through the basics first'>
+        <FormPage title='The basics first'>
             <FormControl>
                 <h2 id="experienceTypeRadioButtonLabel" className='text-xl'>Type</h2>
                 <RadioGroup
@@ -35,13 +35,14 @@ function MainIdea({values, setValues, handleChange}) {
                 />
                 <h2 id="experienceCategoryInfoLabel" className='text-xl mt-10 mb-3'>Category</h2>
                  <Select
+                    variant='standard'
                     labelId="experienceCategoryInfoLabel"
                     value={values.category}
                     onChange={handleChange}
                     name='category'
                     label="Category"
                     >
-                    <MenuItem value="">
+                    <MenuItem value=''>
                         <em>None</em>
                     </MenuItem>
                     <MenuItem value='wellness'>Wellness</MenuItem>

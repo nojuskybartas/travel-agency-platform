@@ -8,16 +8,18 @@ module.exports = {
         'default': '1080px'
       },
       colors: {
-        primary: '#A393EB',
-        secondary: '#9DBF9E',
-        footer: '#CC978E',
+        background: '#d3e0d6',
+        primary: '#587355',
+        secondary: '#2f402d',
+        shadow: '#2f402d',
+        footer: '#a9b8ac',
         form: {
           navbar: '#274029',
           navbarBorder: '#97A097',
-          navbarBorderActive: '#ACD1AD',
+          navbarBorderActive: '#349134',
           navbarText: '#DEF0DF',
           form: '#9DBF9E',
-          formText: '#FFFFFF',
+          formText: '#1d1f1d',
         }
       }
     },

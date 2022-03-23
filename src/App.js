@@ -1,4 +1,5 @@
 import { onAuthStateChanged } from "firebase/auth";
+import { AnimatePresence } from "framer-motion";
 import { cloneDeep } from "lodash";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";

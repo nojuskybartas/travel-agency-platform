@@ -12,7 +12,7 @@ const PrivateRoute = ({ children }) => {
   }
 
   return (pending ? 
-  <div className="w-full h-screen bg-gray-900 flex justify-center items-center">
+  <div className="w-full h-screen bg-background flex justify-center items-center">
     <ThreeDots color="#A393EB" height="100" width="100" />
   </div> 
   :

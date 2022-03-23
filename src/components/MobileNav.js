@@ -7,11 +7,12 @@ import LoginModal from './LoginModal';
 import { useLocation } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { loginState } from '../atoms/navbarAtom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function MobileNav() {
 
     return (
-        <footer className='md:hidden sticky bottom-0 h-14 w-full flex justify-around p-2 z-10 border-t border-solid border-primary overflow-hidden bg-white'>
+        <footer className='md:hidden sticky bottom-0 h-14 w-full flex justify-around p-2 z-10 overflow-hidden backdrop-blur-2xl bg-background'>
             <NavBarItem label='Explore' linkTo='/home'>
                 <SearchIcon className='w-12 h-12'/>
             </NavBarItem>
@@ -48,7 +49,8 @@ function NavBarItem({label, linkTo, ...props}) {
 
     return (
         <Link to={linkTo || location}>
-            <div className={`flex flex-col justify-center items-center bg-transparent w-full h-full ${location.pathname === linkTo && 'text-primary scale-105'}`}>
+            <div 
+            className={`flex flex-col justify-center items-center bg-transparent w-full h-full ${location.pathname === linkTo && 'text-primary scale-105'}`}>
                 {props.children}
                 <p className='text-xs'>{label}</p>
             </div>
