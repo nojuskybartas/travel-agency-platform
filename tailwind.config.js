@@ -14,10 +14,11 @@ module.exports = {
         shadow: '#2f402d',
         footer: '#a9b8ac',
         form: {
-          navbar: '#274029',
-          navbarBorder: '#97A097',
+          navbar: '#6a7d70',
+          navbarBorder: '#869189',
           navbarBorderActive: '#349134',
-          navbarText: '#DEF0DF',
+          navbarBorderDisabled: '#99a39c',
+          navbarText: '#3b423d',
           form: '#9DBF9E',
           formText: '#1d1f1d',
         }

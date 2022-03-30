@@ -23,7 +23,7 @@ const db = getFirestore();
 const auth = getAuth();
 auth.useDeviceLanguage()
 const googleProvider = new GoogleAuthProvider();
-export { db, storage, auth, googleProvider };
+export { db, storage, auth, googleProvider, analytics };
 
 
 

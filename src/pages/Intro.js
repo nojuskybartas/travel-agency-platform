@@ -19,6 +19,8 @@ import sceneryIllustration7 from '../static/illustrations/scenery/svg/landscape_
 import { motion, useAnimation, useTransform, useViewportScroll } from 'framer-motion'
 import { useInView } from 'react-intersection-observer';
 import ScrollForMoreIcon from '../components/ScrollForMoreIcon.js'
+import { analytics } from '../lib/firebase';
+import { logEvent, setUserProperties } from 'firebase/analytics';
 
 export default function Intro() {
 
@@ -48,6 +50,7 @@ export default function Intro() {
                 submitted: true,
             }))
             registerUserToEmailList(inputState.email)
+            logEvent(analytics, 'heart_clicked', { email: inputState.email });
             console.log('registering ', inputState.email)
         }
     }
@@ -259,8 +262,8 @@ export default function Intro() {
                     </p>
                    
                     <form className='w-full h-fit flex flex-col items-center'>
-                        <input type='email'  placeholder='Email' className={`w-full max-w-2xl h-12 border-2 border-solid ${inputState.error ? 'border-red-400' : inputState.submitted? 'border-green-600' : 'border-primary'} bg-transparent rounded-2xl p-4`} onChange={(e) => {setInputState(inputState => ({...inputState, email: e.target.value}))}}/>
-                        {inputState.email && <button  type='submit' className='mt-5' onClick={handleEmailSubmit}>Sign me up 🚀</button>}
+                        <input type='email' disabled={inputState.submitted ? true : false} placeholder='Email' className={`w-full max-w-2xl h-12 border-2 border-solid ${inputState.error ? 'border-red-400' : inputState.submitted? 'border-green-600' : 'border-primary'} bg-transparent rounded-2xl p-4`} onChange={(e) => {setInputState(inputState => ({...inputState, email: e.target.value}))}}/>
+                        {inputState.email && <button type='submit' className='mt-5' onClick={handleEmailSubmit}>{inputState.submitted ? 'We got it! Thanks!' : 'Sign me up 🚀'}</button>}
                     </form>
 
                 </Section>

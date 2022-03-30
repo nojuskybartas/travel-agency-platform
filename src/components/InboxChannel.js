@@ -59,7 +59,7 @@ function InboxChannel({inboxId, onExit, selected}) {
     }
 
     return (            
-        <div style={ width < 768 ? { height: screenHeight } : { height: '100%'}} className={`w-full fixed md:relative overflow-y-scroll md:scrollbar-hide bg-white slide-from-right-animation overflow-hidden ${!isOnInboxView() && exiting && 'slide-to-right-animation'}`}>
+        <div style={ width < 768 ? { height: '100%' } : { height: '100%'}} className={`w-full absolute md:relative z-50 bg-background slide-from-right-animation overflow-hidden ${!isOnInboxView() && exiting && 'slide-to-right-animation'}`}>
             
             <ChatNavBar user={users} onClick={handleMobileExit} mobileKeyboardOpen={mobileKeyboardOpen}/>
             
@@ -93,7 +93,7 @@ function ChatNavBar({user, onClick, mobileKeyboardOpen}) {
     }, [chatNavBarRef])
 
     return (
-        <div className='md:hidden sticky top-0 bg-white w-full h-12 shadow-md flex justify-between items-center px-2 py-1' onClick={onClick}>
+        <div className='md:hidden sticky top-0 w-full h-12 shadow-md flex justify-between items-center px-2 py-1' onClick={onClick}>
             <ChevronLeftIcon className='w-6 h-6'/>
             <div className='flex-1 flex items-center justify-end space-x-2'> 
                 <div className='w-fit flex flex-col -space-y-1'>
@@ -150,7 +150,7 @@ function MessagesView({inboxId, users, mobileKeyboardOpen}) {
     }, [messages])
 
     return (
-        <div ref={messageListContainerRef} className='w-full min-h-[calc(100%-6rem)] md:min-h-[calc(100%-3rem)] space-y-2 flex flex-col'>
+        <div ref={messageListContainerRef} className='w-full h-[calc(100%-6rem)] md:h-[calc(100%-3rem)] overflow-y-scroll space-y-2 flex flex-col'>
 
             <div className='flex-1'/>
 
@@ -233,7 +233,7 @@ function MessageInputField({inboxId, mobileKeyboardOpen, setMobileKeyboardOpen})
     }, [mobileKeyboardOpen])
 
     return (
-        <div className='sticky bottom-0 w-full h-12 py-2 bg-white md:backdrop-blur-sm md:rounded-2xl' ref={inputContainerRef}>
+        <div className='sticky bottom-0 w-full h-12 py-2 md:rounded-2xl' ref={inputContainerRef}>
             <form className='w-full h-10 flex items-center space-x-2 transition-long p-2'>
                 <input placeholder='Type message' className='w-full h-9 p-3 border-solid border-2 border-gray-300 focus:border-primary rounded-3xl shadow-md transition-long' onChange={handleInput} value={newMessage} onFocus={handleOnFocus} onBlur={handleOnBlur}/>
                 <button type='submit' onClick={handleSubmit} className={`${newMessage ? 'w-11' : 'w-0 '} h-10 flex justify-center items-center bg-primary rounded-full shadow-md transition-all duration-200 ease-in-out`}><ChevronDoubleRightIcon className='w-5 h-5'/></button>

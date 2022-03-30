@@ -14,3 +14,13 @@ export const createExperienceFormValuesAtom = atom({
         category: '',
     },
 });
+
+export const createExperienceFormNavbarAtom = atom({
+    key: 'createExperienceFormNavbarState',
+    default: true,
+});
+
+export const createExperienceFormNavbarActionAtom = atom({
+    key: 'createExperienceFormNavbarActionState',
+    default: false,
+});

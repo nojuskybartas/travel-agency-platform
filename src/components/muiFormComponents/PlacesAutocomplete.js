@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
+import { useFormikContext } from 'formik';
 
 // This key was created specifically for the demo in mui.com.
 // You need to create a new one for your application.
@@ -26,8 +27,8 @@ function loadScript(src, position, id) {
 
 const autocompleteService = { current: null };
 
-export default function GoogleMaps({setAddressValue, ...props}) {
-  const [value, setValue] = React.useState(null)
+export default function GoogleMaps() {
+  const [value, setValue] = React.useState(null);
   const [inputValue, setInputValue] = React.useState('');
   const [options, setOptions] = React.useState([]);
   const loaded = React.useRef(false);
@@ -51,10 +52,6 @@ export default function GoogleMaps({setAddressValue, ...props}) {
       }, 200),
     [],
   );
-
-  React.useEffect(() => {
-    setAddressValue(value)
-  }, [value])
 
   React.useEffect(() => {
     let active = true;
@@ -93,9 +90,10 @@ export default function GoogleMaps({setAddressValue, ...props}) {
     };
   }, [value, inputValue, fetch]);
 
+  const { setFieldValue } = useFormikContext()
+
   return (
     <Autocomplete
-      {...props}
       id="google-map-demo"
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.description
@@ -103,20 +101,26 @@ export default function GoogleMaps({setAddressValue, ...props}) {
       filterOptions={(x) => x}
       options={options}
       autoComplete
-      includeInputInList
+      // includeInputInList
       filterSelectedOptions
-      value={value}
+      fullWidth
+      // value={value}
       onChange={(event, newValue) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
+        setFieldValue('location', newValue)
       }}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        // <div className='w-scree'>
-        <TextField {...params} label="Address" variant='standard'/>
-        // </div>
+        <TextField 
+        {...params} 
+        variant='standard'
+        label="Add a location" 
+        helperText='Tell us the main area of the trip here, you will be able to provide more details later'
+        fullWidth 
+        />
       )}
       renderOption={(props, option) => {
         const matches = option.structured_formatting.main_text_matched_substrings;

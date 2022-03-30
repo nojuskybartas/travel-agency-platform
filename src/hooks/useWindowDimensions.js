@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
+  const isMobile = width < 768
   return {
     width,
-    height
+    height,
+    isMobile,
   };
 }
 
