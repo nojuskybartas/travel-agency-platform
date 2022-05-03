@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { userState } from '../../atoms/userAtom';
 import { auth } from '../../lib/firebase';
-import { refreshUserData, setDefaultUserDetailsOnRegister, setUserDetailsOnRegister } from '../../lib/storage';
+import { refreshUserData, setUserDetailsOnRegister } from '../../lib/storage';
 
 
 function EmailRegister({handleLoginShow}) {

@@ -8,10 +8,8 @@ import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
 import { useFormikContext } from 'formik';
+import axios from 'axios';
 
-// This key was created specifically for the demo in mui.com.
-// You need to create a new one for your application.
-const GOOGLE_MAPS_API_KEY = 'AIzaSyDAmEmIsmK9SdQkx-6_0fvo-BQCCA9J2To';
 
 function loadScript(src, position, id) {
   if (!position) {
@@ -28,15 +26,17 @@ function loadScript(src, position, id) {
 const autocompleteService = { current: null };
 
 export default function GoogleMaps() {
-  const [value, setValue] = React.useState(null);
-  const [inputValue, setInputValue] = React.useState('');
+
+  const { setFieldValue, values } = useFormikContext()
+  const [value, setValue] = React.useState(values.location);
+  const [inputValue, setInputValue] = React.useState(values.location);
   const [options, setOptions] = React.useState([]);
   const loaded = React.useRef(false);
 
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {
       loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`,
         document.querySelector('head'),
         'google-maps',
       );
@@ -52,6 +52,14 @@ export default function GoogleMaps() {
       }, 200),
     [],
   );
+
+  const fetchNewLocationImage = (location) => {
+      const url = 'https://api.unsplash.com/search/photos?page=1&query=' + location + '&client_id=' + process.env.REACT_APP_UNSPLASH_ACCESS_KEY;
+      axios.get(url).then(res => {
+          console.log(res.data.results)
+          setFieldValue('locationImage', res.data.results)
+      })
+  }
 
   React.useEffect(() => {
     let active = true;
@@ -90,8 +98,6 @@ export default function GoogleMaps() {
     };
   }, [value, inputValue, fetch]);
 
-  const { setFieldValue } = useFormikContext()
-
   return (
     <Autocomplete
       id="google-map-demo"
@@ -104,11 +110,12 @@ export default function GoogleMaps() {
       // includeInputInList
       filterSelectedOptions
       fullWidth
-      // value={value}
+      value={value}
       onChange={(event, newValue) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
-        setFieldValue('location', newValue)
+        setFieldValue('location', newValue);
+        fetchNewLocationImage(newValue.description);     
       }}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);

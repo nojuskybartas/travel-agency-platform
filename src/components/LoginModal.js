@@ -16,7 +16,6 @@ function LoginModal({label, onExit}) {
 
     const [state, setState] = useState('loginMenu')
     const [showLogin, setShowLogin] = useRecoilState(loginState)
-    const user = auth.currentUser
 
 
     const handleLoginShow = () => {

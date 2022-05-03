@@ -21,6 +21,9 @@ import Intro from "./pages/Intro";
 import Profile from "./pages/Profile";
 import RegisterCreator from "./pages/RegisterCreator";
 import SavedExperiences from "./pages/SavedExperiences";
+import NotFound from './pages/NotFound';
+import Admin from "./pages/Admin";
+import PrivateRouteForRole from "./components/PrivateRouteForRole";
 
 
 function App() {
@@ -57,20 +60,25 @@ function App() {
 
 
   return (
+    <AnimatePresence exitBeforeEnter initial={false} >
       <Routes>
         <Route path="/" element={<Intro/>}/>
         <Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>}/>
         {/* <Route path="/login" element={<PrivateRoute><Login/></PrivateRoute>}/> */}
         <Route path='/profile' element={<PrivateRoute><Profile/></PrivateRoute>}/>
         <Route path="/create" element={<PrivateRoute><CreateExperience/></PrivateRoute>}/>
+        <Route path="/create/:id" element={<PrivateRoute><CreateExperience/></PrivateRoute>}/>
+        {/* <Route path="/create/:id" element={<PrivateRoute><CreateExperienceForm/></PrivateRoute>}/> */}
         <Route path="/creator/register" element={<PrivateRoute><RegisterCreator/></PrivateRoute>}/>
         <Route path="/experiences" element={<PrivateRoute><Experiences/></PrivateRoute>}/>
         <Route path="/experience/:experienceId" element={<PrivateRoute><Experience/></PrivateRoute>}/>
         <Route path="/saved" element={<PrivateRoute><SavedExperiences/></PrivateRoute>}/>
         <Route path="/inbox" element={<PrivateRoute><Inbox/></PrivateRoute>}/>
         <Route path="/inbox/:inboxId" element={<PrivateRoute><Inbox/></PrivateRoute>}/>
-        {/* <Route path="*" element={<NoPage />} /> */}
+        <Route path="/admin" element={<PrivateRouteForRole role='admin'><Admin/></PrivateRouteForRole>}/>
+        <Route path="*" element={<NotFound/>} />
       </Routes>
+    </AnimatePresence>
   );
 }
 

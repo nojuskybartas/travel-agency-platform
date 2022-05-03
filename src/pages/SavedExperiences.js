@@ -33,7 +33,7 @@ function SavedExperiences() {
   }, [userDetails])
 
   return (
-      <MainPageStructure>
+      <MainPageStructure name='savedExperiencesPage'>
         <div className='p-2 min-h-[60vh]'>
             <h1 className='font-bold text-2xl'>Saved Experiences</h1>
             <hr className='w-full h-1 bg-gray-900 mb-3'/>

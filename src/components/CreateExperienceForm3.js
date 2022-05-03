@@ -15,6 +15,7 @@ import { Form, Formik, useFormikContext } from 'formik';
 import languages from '../static/data/languages.json'
 import GoogleMaps from './muiFormComponents/PlacesAutocomplete';
 import ErrorFocus from './createExperienceForm/ErrorFocus.js'
+import IsScrolling from 'react-is-scrolling';
 
 export default function CreateExperienceForm3() {
 
@@ -96,6 +97,7 @@ export default function CreateExperienceForm3() {
         </div>
     )
 }
+
 
 function FormItems() {
 
@@ -189,14 +191,15 @@ function FormItems() {
                     <ConfirmButton name='connection'/>
                 </Section>
             </Page>
-            { !errors.expectations && <>
+            { !errors.expectations || <>
             
             <Page pageNumber={6} title='Lets set up your public page'>
                 <p className='text-sm mb-10'>This is what your experience will look like on the platform</p>
-                <Section title={`Describe what${values.type === 'guide' ? ' you and your guests' : ' the explorers'}  will do.`}>
+                <Section title={`Shortly describe what${values.type === 'guide' ? ' you and your guests' : ' the explorers'}  will do.`}>
                     <TextField
                         label="Description"
                         placeholder='Lets make this exciting'
+                        helperText='We will ask you to describe the trip in more detail later on'
                         multiline
                         rows={6}
                         variant="standard"
@@ -233,6 +236,7 @@ function FormItems() {
                     <Autocomplete
                         multiple
                         options={[
+                            {value: 'babies', label: 'Newborns and babies'},
                             {value: 'kids', label: 'Kids'},
                             {value: 'youngAdults', label: 'Young Adults'},
                             {value: 'adults', label: 'Adults'},
@@ -241,16 +245,18 @@ function FormItems() {
                         name='ageGroups'
                         id='ageGroups'
                         value={values.ageGroups}
-                        onChange = {(event, value) => setFieldValue('ageGroups', value)}
+                        onChange={ (_, value) => setFieldValue('ageGroups', value)}
                         getOptionLabel={(option) => option.label}
+                        
                         renderInput={(params) => (
                         <TextField
                             {...params}
                             label="Age groups"
                             helperText='Please select all age groups that apply'
                             variant="standard"
+                            error={errors.ageGroups}
                         />
-                        )}
+                        )}  
                     />
                 </Section>
             </Page>
@@ -286,7 +292,8 @@ function Page({children, pageNumber, title, ...props}) {
     return (
         <motion.div
         {...props}
-        ref={ref}
+        ref={ref} 
+        onScrollCapture={e => console.log(e)}
         className='w-full md:w-1/2 h-screen snap-start'>
             <motion.h1 
             onViewportEnter={handleScrollEvents} 
@@ -310,11 +317,27 @@ function Section({children, title}) {
 
 function FormWrapper({children, ...props}) {
     const { values } = useFormikContext()
+    const ref = useRef()
+
+    // const handleScroll = (e) => {
+    // //   console.log(e)
+    // };
+
+    // useEffect(() => {
+    //     if (!ref || !ref.current) return
+    //     ref.current.addEventListener("scroll", handleScroll);
+
+    //     return () => {
+    //       ref.current.removeEventListener("scroll", handleScroll);
+    //     };
+    // }, [ref]);
+
     useEffect(() => {
         console.log(values)
     }, [values])
+
     return (
-        <Form className='h-screen w-full pl-4 pr-14 overflow-y-scroll scrollbar-hide snap-y' {...props}>
+        <Form ref={ref} className='h-screen w-full pl-4 pr-14 overflow-y-scroll scrollbar-hide snap-y' {...props}>
             {children}
         </Form>
     )
@@ -420,7 +443,8 @@ function NavItems() {
             <NavChild title='Safety' onClick={() => setCurrentPage(4)} complete={values.safety}/>
             <NavChild title='Connection' onClick={() => setCurrentPage(5)} complete={values.connection}/>
         </NavParent>
-        <NavParent title='Public Page' onClick={() => setCurrentPage(6)} selected={!errors.expectations && currentPage === 6} disabled={errors.expectations ? true : false}>
+        {/* !errors.expectations &&  // disabled={errors.expectations ? true : false} */} 
+        <NavParent title='Public Page' onClick={() => setCurrentPage(6)} selected={[6,7,8,9].includes(currentPage)} >
             <NavChild title='Description' onClick={() => setCurrentPage(6)} complete={values.description}/>
             <NavChild title='Requirements' onClick={() => setCurrentPage(6)} complete={values.requirements}/>
             <NavChild title='Title' onClick={() => setCurrentPage(6)} complete={values.title}/>

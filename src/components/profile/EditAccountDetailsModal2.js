@@ -11,7 +11,7 @@ import currencies from "../../lib/commonCurrency.json";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
-import PictureUpload from "../form/PictureUpload";
+import ProfilePictureUpload from "../form/ProfilePictureUpload";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
 import { PhotoCameraBackOutlined } from "@mui/icons-material";
 import { auth, db, storage } from "../../lib/firebase";
@@ -206,7 +206,7 @@ function EditAccountDetailsModal2({show, setShow}) {
                         onChange={handleInputChange}
                     />
 
-                    <PlacesAutocomplete setAddressValue={(value) => setValues({...values,address:value})} minWidth={width < 768 ? '85vw' : ''}/>
+                    {/* <PlacesAutocomplete setAddressValue={(value) => setValues({...values,address:value})} minWidth={width < 768 ? '85vw' : ''}/> */}
                     
                     <TextField
                         variant="standard"

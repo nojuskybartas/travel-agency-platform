@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 function MobileNav() {
 
     return (
-        <footer className='md:hidden sticky bottom-0 h-14 w-full flex justify-around p-2 z-10 overflow-hidden backdrop-blur-2xl bg-background'>
+        <footer className='md:hidden sticky bottom-0 h-14 w-full flex justify-around p-2 z-10 overflow-hidden backdrop-blur-3xl border-x-2 border-t-2 border-solid border-primary rounded-t-lg'>
             <NavBarItem label='Explore' linkTo='/home'>
                 <SearchIcon className='w-12 h-12'/>
             </NavBarItem>
@@ -50,7 +50,7 @@ function NavBarItem({label, linkTo, ...props}) {
     return (
         <Link to={linkTo || location}>
             <div 
-            className={`flex flex-col justify-center items-center bg-transparent w-full h-full ${location.pathname === linkTo && 'text-primary scale-105'}`}>
+            className={`flex flex-col justify-center items-center bg-transparent w-full h-full ${location.pathname.includes(linkTo) && 'text-primary scale-105'}`}>
                 {props.children}
                 <p className='text-xs'>{label}</p>
             </div>

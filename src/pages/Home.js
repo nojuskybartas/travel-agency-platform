@@ -12,6 +12,7 @@ import LoadingIndicator from "../components/LoadingIndicator"
 import CityCard from "../components/CityCard"
 import MobileNav from "../components/MobileNav"
 import MainPageStructure from "../components/MainPageStructure"
+import RegionSelect from "../components/RegionSelect"
 
 
 function Home () {
@@ -50,9 +51,12 @@ function Home () {
     ];
 
     return (
-        <MainPageStructure key='Home page'>
+        <MainPageStructure name='homePage'>
             {/* <div className="h-full overflow-y-scroll"> */}
                 <SearchWBG/>
+                <div className="w-full h-fit">
+                    <RegionSelect/>
+                </div>
                 <div className='w-full h-fit test-outline'>
                     <Carousel label='Explore Latest Experiences' infinite items={latestExperienceCards}/>
                     <LoadingIndicator/>

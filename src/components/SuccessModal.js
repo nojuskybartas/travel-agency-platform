@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-function SuccessModal({successMessage, destination}) {
+function SuccessModal({title, successMessage, destination}) {
 
     console.log('render')
 
@@ -16,15 +16,16 @@ function SuccessModal({successMessage, destination}) {
 
      const handleShow = () => {
         setShowModal(!showModal)
-        navigate(destination)
+        if (destination) navigate(destination)
     }
 
     return (
         <ReactModal
         isOpen={showModal}
-        className='loginModal'
+        className='loginModal w-[80vw] h-[80vh] md:w-1/2 md:min-h-[40vh] rounded-xl'
         overlayClassName='loginModalOverlay'
         onRequestClose={handleShow}
+        onAfterClose={() => {document.body.style.overflow = 'unset'}}
         shouldCloseOnOverlayClick={true}
         shouldCloseOnEsc={true}
         ariaHideApp={false}
@@ -34,9 +35,9 @@ function SuccessModal({successMessage, destination}) {
             <XIcon className='w-4 h-4 cursor-pointer' onClick={handleShow}/>
         </div>
         
+        {title ? title : <h1 className='font-bold text-lg w-full text-center'>⭐ Yippie! ⭐</h1>}
         <div className='w-full h-full flex flex-col items-center justify-center text-center space-y-4'>
-            <h1 className='font-bold text-lg'>⭐ Yippie! ⭐</h1>
-            <p className='text-lg'>{successMessage}</p>
+            {successMessage}
         </div>
         
             

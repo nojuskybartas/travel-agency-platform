@@ -125,7 +125,7 @@ function Experience() {
     
 
     return (
-        <MainPageStructure hideFooter>
+        <MainPageStructure hideFooter name='experiencePage'>
             {experience ? <>
                 <LoadingIndicator/>
                 <EditExperience show={showEditor} setShow={setShowEditor} experience={experience}/>

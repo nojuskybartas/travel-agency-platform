@@ -9,7 +9,7 @@ import CountrySelect from '../components/form/CountrySelect';
 import GooglePlacesInput from '../components/form/GooglePlacesInput';
 import CurrencySelector from '../components/form/CurrencySelector';
 import MotivationInput from '../components/form/MotivationInput';
-import PictureUpload from '../components/form/PictureUpload';
+import ProfilePictureUpload from './form/ProfilePictureUpload';
 import { auth, db, storage } from '../lib/firebase';
 import { ref, uploadBytes } from 'firebase/storage';
 import { getImagesFromStorageUrl, refreshUserData } from '../lib/storage';

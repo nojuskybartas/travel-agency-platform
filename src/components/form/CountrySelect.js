@@ -20,15 +20,14 @@ const CountrySelect = (props) => {
   });
 
   return (
-    <div className="w-full h-fit text-left">
-        <div className="w-full h-fit flex justify-between">
-            <p className="text-sm">Nationality:</p>
-            <p className="text-xs italic text-red-500">{meta.error ? meta.error : null}</p>
-        </div>
-        
+    <div className="w-full max-w-md h-fit">
+      <div className="w-full h-fit flex justify-between">
+          <p className="font-semibold">Nationality:</p>
+          <p className="text-xs italic text-red-500">{meta.error ? meta.error : null}</p>
+      </div>
       <select
         name={field.name}
-        className="w-full h-fit"
+        className="w-full h-10 rounded-lg p-2"
         value={field.value || 'NL'}
         onChange={(e) => helpers.setValue(e.target.value)}
       >

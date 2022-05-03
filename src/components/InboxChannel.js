@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronDoubleRightIcon, ChevronLeftIcon } from '@heroicons/react/outline';
-import { collection, doc, getDoc, limit, onSnapshot, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, setDoc, startAfter, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import { trackPromise } from 'react-promise-tracker';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -20,7 +20,9 @@ function InboxChannel({inboxId, onExit, selected}) {
     const location = useLocation()
     const [mobileKeyboardOpen, setMobileKeyboardOpen] = useState(false)
     const screenHeight = use100vh()
+    const windowHeight = screenHeight ? screenHeight / 1 : '100%'
     const {width} = useWindowDimensions()
+    const [error, setError] = useState(null)
     
 
     useEffect(() => {
@@ -59,21 +61,22 @@ function InboxChannel({inboxId, onExit, selected}) {
     }
 
     return (            
-        <div style={ width < 768 ? { height: '100%' } : { height: '100%'}} className={`w-full absolute md:relative z-50 bg-background slide-from-right-animation overflow-hidden ${!isOnInboxView() && exiting && 'slide-to-right-animation'}`}>
+        // style={ width < 768 ? { height: windowHeight } : { height: '100%'}}
+        <div className={`w-full h-full absolute md:relative bg-background slide-from-right-animation overflow-hidden ${!isOnInboxView() && exiting && 'slide-to-right-animation'}`}>
             
-            <ChatNavBar user={users} onClick={handleMobileExit} mobileKeyboardOpen={mobileKeyboardOpen}/>
+            <ChatNavBar user={users} onClick={handleMobileExit} mobileKeyboardOpen={mobileKeyboardOpen} error={error}/>
             
             <LoadingIndicator/>
 
-            <MessagesView inboxId={inboxId} users={users} mobileKeyboardOpen={mobileKeyboardOpen}/>
+            <MessagesView inboxId={inboxId} users={users} mobileKeyboardOpen={mobileKeyboardOpen} error={error} setError={setError}/>
             
-            <MessageInputField inboxId={inboxId} setMobileKeyboardOpen={setMobileKeyboardOpen} mobileKeyboardOpen={mobileKeyboardOpen}/>
+            <MessageInputField inboxId={inboxId} setMobileKeyboardOpen={setMobileKeyboardOpen} mobileKeyboardOpen={mobileKeyboardOpen} error={error}/>
             
         </div>
     );
 }
 
-function ChatNavBar({user, onClick, mobileKeyboardOpen}) {
+function ChatNavBar({user, onClick, mobileKeyboardOpen, error}) {
 
     const chatNavBarRef = useRef()
 
@@ -95,28 +98,61 @@ function ChatNavBar({user, onClick, mobileKeyboardOpen}) {
     return (
         <div className='md:hidden sticky top-0 w-full h-12 shadow-md flex justify-between items-center px-2 py-1' onClick={onClick}>
             <ChevronLeftIcon className='w-6 h-6'/>
+            {error && <p>Back to Inbox</p>}
             <div className='flex-1 flex items-center justify-end space-x-2'> 
                 <div className='w-fit flex flex-col -space-y-1'>
                     <p>{user?.name}</p>
                     <p className='text-right italic text-xs'>{user?.type === 'creator' && 'Creator'}</p>
                 </div>
                 <img className='w-10 h-10 object-cover rounded-full' src={user?.picture}/>
+                
             </div>
         </div>
     )
 }
 
-function MessagesView({inboxId, users, mobileKeyboardOpen}) {
+function MessagesView({inboxId, users, mobileKeyboardOpen, error, setError}) {
 
     const [messages, setMessages] = useState([]);
+    const [lastKey, setLastKey] = useState(null)
     const messagesEndRef = useRef(null)
     const {user} = useAuth()
+    const [fetching, setFetching] = useState(false)
+    const [initialFetchDone, setInitialFetchDone] = useState(false)
+    
     
     const messageListContainerRef = useRef()
 
+    const getNextMessages = (lastMessage) => {
+        console.log(lastMessage)
+        if (messages.length > 20) return
+        setFetching(true)
+        const queryRef = query(collection(db, `messageChannels/${inboxId}/messages`), limit(20), orderBy('sentOn', 'desc'), startAfter(lastMessage.sentOn))
+        getDocs(queryRef)
+        .then(documentSnapshot => {
+            const fetchedMessages = []
+            documentSnapshot.forEach((doc) => {
+                const msg = doc.data()
+                msg.id = doc.id
+                fetchedMessages.push(msg)
+            });
+            const newMessages = fetchedMessages.reverse()
+            console.log(newMessages)
+            setMessages(prevMessages => [...newMessages, ...prevMessages])
+            setFetching(false)
+            if (!initialFetchDone) {
+                setInitialFetchDone(true)
+            }
+        })
+        .catch(e => console.log(e))
+    }
+
     useEffect(() => {
+
+        // getNextMessages({sentOn: 1645920574606})
         
-        const unsubscribe = onSnapshot(query(collection(db, `messageChannels/${inboxId}/messages`), limit(15), orderBy('sentOn', 'desc')), (querySnapshot) => {
+        const unsubscribe = onSnapshot(query(collection(db, `messageChannels/${inboxId}/messages`), orderBy('sentOn', 'desc')), 
+        (querySnapshot) => {
             const fetchedMessages = []
             querySnapshot.forEach((doc) => {
                 const msg = doc.data()
@@ -124,7 +160,15 @@ function MessagesView({inboxId, users, mobileKeyboardOpen}) {
                 fetchedMessages.push(msg)
             });
             setMessages(fetchedMessages.reverse())
+            // setMessages(prevMessages => ([...prevMessages, ...fetchedMessages.reverse()]))
+            // messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+        }, 
+        (error) => {
+            setError(error)
         })
+
+        // getNextMessages({sentOn: new Date().valueOf()})
+
 
         return unsubscribe
     }, [])
@@ -146,16 +190,37 @@ function MessagesView({inboxId, users, mobileKeyboardOpen}) {
     }, [mobileKeyboardOpen])
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        // console.log(messages)
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
     }, [messages])
+    
 
     return (
         <div ref={messageListContainerRef} className='w-full h-[calc(100%-6rem)] md:h-[calc(100%-3rem)] overflow-y-scroll space-y-2 flex flex-col'>
 
             <div className='flex-1'/>
 
-            {messages.length === 0 && 
+            {/* <InView>
+                {({ inView, ref, entry }) => {
+                    
+                    if (inView && messages.length > 0 && !fetching) {         
+                        const lastMessage = messages[0]
+                        if (lastMessage?.sentOn) {
+                            getNextMessages(lastMessage)
+                            console.log('last message:', lastMessage)
+                        }
+                    }
+                    return (
+                        <div ref={ref}></div>
+                    )
+                }}
+            </InView> */}
+
+            {messages.length === 0 && !error &&
             <NewChatDisplay message={'Start a chat with ' + users.name}/>}
+
+            {error &&
+            <NewChatDisplay message='There has been an error'/>}
 
             {messages.map((message, i) => {
                 const isOwner = user.uid === message.author
@@ -189,7 +254,7 @@ function MessagesView({inboxId, users, mobileKeyboardOpen}) {
 
 }
 
-function MessageInputField({inboxId, mobileKeyboardOpen, setMobileKeyboardOpen}) {
+function MessageInputField({inboxId, mobileKeyboardOpen, setMobileKeyboardOpen, error}) {
 
     const [newMessage, setNewMessage] = useState('')
     const inputContainerRef = useRef()
@@ -232,7 +297,7 @@ function MessageInputField({inboxId, mobileKeyboardOpen, setMobileKeyboardOpen})
         
     }, [mobileKeyboardOpen])
 
-    return (
+    return !error && (
         <div className='sticky bottom-0 w-full h-12 py-2 md:rounded-2xl' ref={inputContainerRef}>
             <form className='w-full h-10 flex items-center space-x-2 transition-long p-2'>
                 <input placeholder='Type message' className='w-full h-9 p-3 border-solid border-2 border-gray-300 focus:border-primary rounded-3xl shadow-md transition-long' onChange={handleInput} value={newMessage} onFocus={handleOnFocus} onBlur={handleOnBlur}/>

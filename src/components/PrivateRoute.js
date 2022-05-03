@@ -1,22 +1,18 @@
-import { ThreeDots } from "react-loader-spinner"
-import { useNavigate } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
+import LoadingSpinner from "./LoadingSpinner"
 
 
 const PrivateRoute = ({ children }) => {
-  const { auth, isSignedIn, pending } = useAuth()
-  const navigate = useNavigate()
-  if (!pending && !isSignedIn) {
-    console.log('not pending and not signed in -> navigating to /')
-    navigate('/')
+  const { isSignedIn, pending } = useAuth()
+
+  const authenticate = () => {
+    if (pending) return <LoadingSpinner/>
+    if (isSignedIn) return children
+    return <Navigate to='/'/>
   }
 
-  return (pending ? 
-  <div className="w-full h-screen bg-background flex justify-center items-center">
-    <ThreeDots color="#A393EB" height="100" width="100" />
-  </div> 
-  :
-  children)
+  return authenticate()
 }
 
 export default PrivateRoute

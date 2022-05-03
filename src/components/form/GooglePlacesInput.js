@@ -1,85 +1,162 @@
-import { Field, useField } from 'formik';
-import { useEffect, useState } from 'react';
-import PlacesAutocomplete from 'react-places-autocomplete';
-import {
-    geocodeByAddress,
-    geocodeByPlaceId,
-    getLatLng,
-  } from 'react-places-autocomplete';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import parse from 'autosuggest-highlight/parse';
+import throttle from 'lodash/throttle';
+import { useFormikContext } from 'formik';
+import axios from 'axios';
 
-// const GOOGLE_PLACES_API_KEY = 'AIzaSyDAmEmIsmK9SdQkx-6_0fvo-BQCCA9J2To'
-// const script = document.createElement("script");
-// script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_PLACES_API_KEY}&libraries=places`;
-// script.async = true;
-// script.id = 'GooglePlacesApi'
-// document.body.appendChild(script);
 
-const GooglePlacesInput = (props) => {
-  const [field, meta, helpers] = useField(props)
-  const [state, setState] = useState({address: ''})
+function loadScript(src, position, id) {
+  if (!position) {
+    return;
+  }
 
-  const handleChange = address => {
-    setState({ address });
-
-    // helpers.setValue()
-  };
- 
-  const handleSelect = address => {
-    setState({address: address})
-    helpers.setValue([...field.value, address])
-    // geocodeByAddress(address)
-    //   .then(results => getLatLng(results[0]))
-    //   .then(latLng => console.log('Success', latLng))
-    //   .catch(error => console.error('Error', error));
-  };
-
-  useEffect(() => {
-    console.log(state)
-  }, [state])
-    
-    return (
-      <PlacesAutocomplete
-        value={state.address}
-        onChange={handleChange}
-        onSelect={handleSelect}
-      >
-        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-          <div className='w-full h-10 flex items-center border-b-2 border-solid border-gray-800 relative transition-long'>
-            <Field
-              name={field.name}
-              {...getInputProps({
-                placeholder: props.label || 'Location',
-                className: 'w-full h-full px-6 outline-none ',
-              })}
-            />
-            <p className='text-xs text-red-400 italic'>{meta.error ? meta.error : null}</p>
-            <div className="autocomplete-dropdown-container w-full h-fit absolute bottom-0 transition-long px-6 text-left bg-gray-400 z-10 inputBarSuggestions_shadow rounded-b-xl translate-y-full">
-              {loading && <div className='italic'>Loading...</div>}
-              {suggestions.map((suggestion, i) => {
-                const className = suggestion.active
-                  ? 'suggestion-item--active bg-gray-400 w-full h-full cursor-pointer'
-                  : 'suggestion-item bg-inherit z-10';
-                // inline style for demonstration purpose
-                // const style = suggestion.active
-                //   ? { backgroundColor: '#000000', cursor: 'pointer' }
-                //   : { backgroundColor: '', cursor: 'pointer' };
-                return (
-                  <div key={i}
-                    {...getSuggestionItemProps(suggestion, {
-                      className,
-                      // style,
-                    })}
-                  >
-                    <span>{suggestion.description}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </PlacesAutocomplete>
-      // </Field>
-    )
+  const script = document.createElement('script');
+  script.setAttribute('async', '');
+  script.setAttribute('id', id);
+  script.src = src;
+  position.appendChild(script);
 }
 
-export default GooglePlacesInput
+const autocompleteService = { current: null };
+
+export default function GoogleMaps({label}) {
+
+  const { setFieldValue, values } = useFormikContext()
+  const [value, setValue] = React.useState(values.location);
+  const [inputValue, setInputValue] = React.useState(values.location);
+  const [options, setOptions] = React.useState([]);
+  const loaded = React.useRef(false);
+
+  if (typeof window !== 'undefined' && !loaded.current) {
+    if (!document.querySelector('#google-maps')) {
+      loadScript(
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&libraries=places`,
+        document.querySelector('head'),
+        'google-maps',
+      );
+    }
+
+    loaded.current = true;
+  }
+
+  const fetch = React.useMemo(
+    () =>
+      throttle((request, callback) => {
+        autocompleteService.current.getPlacePredictions(request, callback);
+      }, 200),
+    [],
+  );
+
+  React.useEffect(() => {
+    let active = true;
+
+    if (!autocompleteService.current && window.google) {
+      autocompleteService.current =
+        new window.google.maps.places.AutocompleteService();
+    }
+    if (!autocompleteService.current) {
+      return undefined;
+    }
+
+    if (inputValue === '') {
+      setOptions(value ? [value] : []);
+      return undefined;
+    }
+
+    fetch({ input: inputValue }, (results) => {
+      if (active) {
+        let newOptions = [];
+
+        if (value) {
+          newOptions = [value];
+        }
+
+        if (results) {
+          newOptions = [...newOptions, ...results];
+        }
+
+        setOptions(newOptions);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [value, inputValue, fetch]);
+
+  return (
+    <Autocomplete
+      id="google-map-demo"
+      getOptionLabel={(option) =>
+        typeof option === 'string' ? option : option.description
+      }
+      filterOptions={(x) => x}
+      options={options}
+      autoComplete
+      // includeInputInList
+      filterSelectedOptions
+      fullWidth
+      value={value}
+      onChange={(event, newValue) => {
+        setOptions(newValue ? [newValue, ...options] : options);
+        setValue(newValue);
+        setFieldValue('location', newValue);   
+      }}
+      onInputChange={(event, newInputValue) => {
+        setInputValue(newInputValue);
+      }}
+      renderInput={(params) => (
+        <TextField 
+        {...params} 
+        className='rounded-lg w-full h-10 p-3'
+        placeholder={label}
+        label={label} 
+        fullWidth 
+        name='address'
+        />
+      )}
+      renderOption={(props, option) => {
+        const matches = option.structured_formatting.main_text_matched_substrings;
+        const parts = parse(
+          option.structured_formatting.main_text,
+          matches.map((match) => [match.offset, match.offset + match.length]),
+        );
+
+        return (
+          <li {...props}>
+            <Grid container alignItems="center">
+              <Grid item>
+                <Box
+                  component={LocationOnIcon}
+                  sx={{ color: 'text.secondary', mr: 2 }}
+                />
+              </Grid>
+              <Grid item xs>
+                {parts.map((part, index) => (
+                  <span
+                    key={index}
+                    style={{
+                      fontWeight: part.highlight ? 700 : 400,
+                    }}
+                  >
+                    {part.text}
+                  </span>
+                ))}
+
+                <Typography variant="body2" color="text.secondary">
+                  {option.structured_formatting.secondary_text}
+                </Typography>
+              </Grid>
+            </Grid>
+          </li>
+        );
+      }}
+    />
+  );
+}

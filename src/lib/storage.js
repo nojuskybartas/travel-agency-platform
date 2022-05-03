@@ -49,73 +49,36 @@ export const getImagesFromStorageUrl = async(url) => {
     return images
 }
 
-export const setDefaultUserDetailsOnRegister = async(uid) => {
-    const detailsRef = doc(db, `users/${uid}/account/details`)
-    const detailsData = {
-        type: 'regular', // can be creator
-        picture: auth.currentUser.photoURL,
-        name: auth.currentUser.displayName,
-    }
-
-    const financialsRef = doc(db, `users/${uid}/account/financials`)
-    const financialsData = {
-        currency: 'EUR',
-    }
-
-
-    setDoc(detailsRef, detailsData).then(() => {
-        setDoc(financialsRef, financialsData).then(() => {
-            console.log('data set')
-        });
-    });
-
-}
-
 export const setUserDetailsOnRegister = async(name, photoURL, currency) => {
-    const detailsRef = doc(db, `users/${auth.currentUser.uid}/account/details`)
-    const detailsData = {
-        type: 'regular', // can be creator
+    const publicDetailsRef = doc(db, `users/${auth.currentUser.uid}/accountDetails/public`)
+    const publicDetailsData = {
         picture: photoURL,
         name: name,
-    }
-
-    const financialsRef = doc(db, `users/${auth.currentUser.uid}/account/financials`)
-    const financialsData = {
         currency: currency,
     }
 
+    const privateDetailsRef = doc(db, `users/${auth.currentUser.uid}/accountDetails/private`)
+    const privateDetailsData = {}
 
-    await setDoc(detailsRef, detailsData)
-    await setDoc(financialsRef, financialsData)
-    // setDoc(detailsRef, detailsData).then(() => {
-    //     setDoc(financialsRef, financialsData).then(() => {
-    //         console.log('data set')
-    //     });
-    // });
+    await setDoc(publicDetailsRef, publicDetailsData)
+    await setDoc(privateDetailsRef, privateDetailsData)
 }
 
 export const setCurrentUserProfilePicture = async(url) => {
 
-    const detailsRef = doc(db, `users/${auth.currentUser.uid}/account/details`)
+    const detailsRef = doc(db, `users/${auth.currentUser.uid}/accountDetails/public`)
 
     await updateDoc(detailsRef, {
         picture: url
     })
 }
 
-// export const updateCurrentUserProfilePicture = async(url) => {
-//     const data = await getUserDetails(auth.currentUser.uid)
-//     data.picture = url
-//     const detailsRef = doc(db, `users/${auth.currentUser.uid}/account/details`)
-    
-//     await setDoc(detailsRef, data);
-// }
-
 export const refreshUserData = async() => {
-    console.log('refreshing user data')
     if (!auth.currentUser) return null
-    const details = await getCurrentUserDetails()
-    const financials = await getCurrentUserFinancials()
+    console.log('refreshing user data')
+    const accountDetails = await getCurrentUserDetails()
+    // const financials = await getCurrentUserFinancials()
+    const roles = await getCurrentUserRoles()
     const messageChannels = await getCurrentUserMessageChannels()
     const savedExperiences = await getCurrentUserSavedExperiences()
 
@@ -135,14 +98,17 @@ export const refreshUserData = async() => {
         userSavedExperiences.push(e)
     })
 
-
-    const data = details.data()
-    return {
-        ...data,
-        financials: financials.data(),
+    const data = {
+        ...accountDetails,
+        // financials: financials.data(),
+        roles: roles,
         messageChannels: userMessageChannels,
         savedExperiences: userSavedExperiences
     }
+
+    console.log(data)
+
+    return data
   }
 
 export const getCurrentUserDetails = async() => {
@@ -150,8 +116,13 @@ export const getCurrentUserDetails = async() => {
     return data
 }
 
-export const getCurrentUserFinancials = async() => {
-    const data = await getUserFinancials(auth.currentUser.uid)
+// export const getCurrentUserFinancials = async() => {
+//     const data = await getUserFinancials(auth.currentUser.uid)
+//     return data
+// }
+
+export const getCurrentUserRoles = async() => {
+    const data = await getUserRoles(auth.currentUser.uid)
     return data
 }
 
@@ -166,15 +137,26 @@ export const getCurrentUserSavedExperiences = async() => {
 }
 
 export const getUserDetails = async(uid) => {
-    const userRef = doc(db, `users/${uid}/account/details`)
-    const data = await getDoc(userRef)
-    return data
+    const publicRef = doc(db, `users/${uid}/accountDetails/public`)
+    const publicData = await getDoc(publicRef)
+    const privateRef = doc(db, `users/${uid}/accountDetails/private`)
+    const privateData = await getDoc(privateRef)
+    return {
+        ...privateData.data(),
+        ...publicData.data()
+    }
 }
 
-export const getUserFinancials = async(uid) => {
-    const userRef = doc(db, `users/${uid}/account/financials`)
-    const data = await getDoc(userRef)
-    return data
+// export const getUserFinancials = async(uid) => {
+//     const userRef = doc(db, `users/${uid}/account/financials`)
+//     const data = await getDoc(userRef)
+//     return data
+// }
+
+export const getUserRoles = async(uid) => {
+    const rolesRef = doc(db, `users/${uid}`)
+    const data = await getDoc(rolesRef)
+    return data.data()?.roles
 }
 
 export const getUserMessageChannels = async(uid) => {
@@ -218,7 +200,7 @@ export const getExperiencesQuery = async(start, end) => {
 
 export const getUserExperiences = async(uid) => {
 
-    const userExpRef = collection(db, `users/${uid}/created_experiences`)
+    const userExpRef = collection(db, `users/${uid}/createdExperiences`)
     const data = await getDocs(userExpRef)
     return data
 }
@@ -226,9 +208,8 @@ export const getUserExperiences = async(uid) => {
 export const getExperienceOwner = async(ownerRef) => {
     const user = await getDoc(ownerRef)
     const details = await getUserDetails(user.id)
-    const data = details.data()
     return {
-        ...data,
+        ...details,
         id: user.id
     }
 }
@@ -254,10 +235,10 @@ export const getExperienceReviews = async(id) => {
 }
 
 
-export const getSearchResults = (input) => {
-    const q = query(experiencesRef, where('location', '==', input));
-    return q
-}
+// export const getSearchResults = (input) => {
+//     const q = query(experiencesRef, where('location', '==', input));
+//     return q
+// }
 
 export const updateStatisticsUserVote = () => {
     updateDoc(doc(db, 'statistics/predeploy'), {

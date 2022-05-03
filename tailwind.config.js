@@ -14,6 +14,10 @@ module.exports = {
         shadow: '#2f402d',
         footer: '#a9b8ac',
         form: {
+          complete: '#587355',
+          incomplete: '#7b9678',
+          disabled: '#949e93',
+          submitButton: '#587355',
           navbar: '#6a7d70',
           navbarBorder: '#869189',
           navbarBorderActive: '#349134',

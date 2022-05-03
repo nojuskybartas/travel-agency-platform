@@ -30,7 +30,7 @@ function Experiences() {
 
 
   return (
-      <MainPageStructure key='Experiences page'>
+      <MainPageStructure name='experiencesPage'>
           <LoadingIndicator/>
           <div className='w-full h-fit min-h-[60vh] p-16 flex flex-wrap justify-center'>
             {experiences.map(item => (
